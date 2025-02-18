@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model sensor_datas {
+  id                     Int      @id @default(autoincrement())
+  timestamp              DateTime @default(now())
+  temperature            Float?
+  humidity               Float?
+  ph                     Float?
+  rainfall               Float?
+  soil_moisture          Float?
+  sunlight_exposure      Float?
+  wind_speed             Float?
+  co2_concentration      Float?
+  frost_risk             Float?
+  water_usage_efficiency Float?
+
+  soil_compositions         soil_compositions?
+  crop_infos                crop_infos?
+  irrigation_fertilizations irrigation_fertilizations?
+  geo_environmentals        geo_environmentals?
+
+  @@map("sensor_datas") // กำหนดให้ Table ชื่อ "sensor_data"
+}
+
+model soil_compositions {
+  id             Int          @id @default(autoincrement())
+  sensor_id      Int          @unique
+  nitrogen       Int
+  phosphorus     Int
+  potassium      Int
+  organic_matter Float?
+  soil_type      String
+  sensor         sensor_datas @relation(fields: [sensor_id], references: [id])
+
+  @@map("soil_compositions")
+}
+
+model crop_infos {
+  id              Int          @id @default(autoincrement())
+  sensor_id       Int          @unique
+  plant           String
+  plant_season    String
+  plantation_area String
+  growth_stage    String
+  pest_pressure   Float?
+  crop_density    Float?
+  sensor          sensor_datas @relation(fields: [sensor_id], references: [id])
+
+  @@map("crop_infos")
+}
+
+model irrigation_fertilizations {
+  id                   Int          @id @default(autoincrement())
+  sensor_id            Int          @unique
+  irrigation_frequency Int?
+  fertilizer_usage     Float?
+  water_source_type    String
+  sensor               sensor_datas @relation(fields: [sensor_id], references: [id])
+
+  @@map("irrigation_fertilizations")
+}
+
+model geo_environmentals {
+  id                   Int          @id @default(autoincrement())
+  sensor_id            Int          @unique
+  urban_area_proximity Float?
+  sensor               sensor_datas @relation(fields: [sensor_id], references: [id])
+
+  @@map("geo_environmentals")
+}
+
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  username      String?         @unique
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String  @unique
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User?   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}

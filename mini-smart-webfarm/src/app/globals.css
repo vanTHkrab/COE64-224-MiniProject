@@ -7,7 +7,7 @@
     font-family: 'Roboto', sans-serif;
     font-size: 1rem;
     line-height: 1.5;
-    background-color: #e0e0e0;
+    /*background-color: #e0e0e0;*/
   }
 
   html {
@@ -19,4 +19,21 @@
   .container {
     @apply mx-auto px-4;
   }
+
+  .form-label {
+    @apply block text-sm font-medium absolute left-3 top-2 text-gray-500 peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-[-50%] peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-500 transition-all;
+  }
+
+  .form-control {
+    @apply block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300 sm:text-sm
+  }
+}
+
+@keyframes focus {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(66, 153, 225, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0);
+    }
 }

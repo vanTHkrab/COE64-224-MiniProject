@@ -29,6 +29,8 @@ app.get('/users', async (req: Request, res: Response) => {
     res.json(users);
 });
 
+
+
 app.listen(PORT, async () => {
     console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });

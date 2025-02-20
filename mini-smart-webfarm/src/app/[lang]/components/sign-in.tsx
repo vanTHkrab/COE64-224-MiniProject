@@ -2,7 +2,7 @@ import { signIn } from "@/auth";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function SignIn() {
+export default async function SignIn() {
     return (
         <div>
             <h1 className="text-center text-2xl font-bold">Sign in to an account</h1>

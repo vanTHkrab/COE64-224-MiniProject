@@ -1,7 +1,6 @@
-import SignIn from "@/components/sign-in";
+import SignIn from "@/app/[lang]/components/sign-in";
+import UserDetail from "@/app/[lang]/components/user-detail";
 import { auth } from "@/auth";
-import Image from "next/image";
-import Link from "next/link";
 
 
 export default async function Home() {
@@ -17,7 +16,7 @@ export default async function Home() {
 
                 <p className="text-lg font-semibold text-gray-700 mb-4 mt-32 text-center">Welcome to Our Platform</p>
                 <div className="container mt-16 mx-auto p-10 bg-white rounded-xl shadow-2xl">
-                    <SignIn />
+                    {session ? <UserDetail /> : <SignIn />}
                 </div>
             </div>
         </div>

@@ -1,7 +1,6 @@
 import React from 'react';
-import SignOut from "@/app/[lang]/components/signout-button";
+import SignOut from "@/components/signout-button";
 import { auth } from "@/auth";
-
 
 export default async function UserDetail() {
     const session = await auth();

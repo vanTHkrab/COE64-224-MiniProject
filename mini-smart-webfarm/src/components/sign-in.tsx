@@ -8,10 +8,10 @@ export default async function SignIn() {
             <h1 className="text-center text-2xl font-bold">Sign in to an account</h1>
             <p className="mt-6 text-sm text-gray-600">*Indicates required field</p>
             <form
-                action={async (formData) => {
-                    "use server";
-                    await signIn("credentials", formData);
-                }}
+                // action={async (formData) => {
+                //     "use server";
+                //     await signIn("credentials", formData);
+                // }}
                 className="justify-center w-full"
             >
                 <div className="space-y-4">
@@ -62,10 +62,10 @@ export default async function SignIn() {
             </form>
 
             <form
-                action={async () => {
-                    "use server";
-                    await signIn("google");
-                }}
+                // action={async () => {
+                //     "use server";
+                //     await signIn("google");
+                // }}
                 className="flex justify-center mt-5"
             >
                 <button

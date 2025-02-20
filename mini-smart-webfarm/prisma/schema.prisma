@@ -8,7 +8,7 @@ datasource db {
 }
 
 model sensor_datas {
-  id                     Int      @id @default(autoincrement())
+  id                     Int      @id @default(autoincrement()) @unique
   timestamp              DateTime @default(now())
   temperature            Float?
   humidity               Float?
@@ -26,11 +26,11 @@ model sensor_datas {
   irrigation_fertilizations irrigation_fertilizations?
   geo_environmentals        geo_environmentals?
 
-  @@map("sensor_datas") // กำหนดให้ Table ชื่อ "sensor_data"
+  @@map("sensor_datas")
 }
 
 model soil_compositions {
-  id             Int          @id @default(autoincrement())
+  id             Int          @id @default(autoincrement()) @unique
   sensor_id      Int          @unique
   nitrogen       Int
   phosphorus     Int
@@ -43,7 +43,7 @@ model soil_compositions {
 }
 
 model crop_infos {
-  id              Int          @id @default(autoincrement())
+  id              Int          @id @default(autoincrement()) @unique
   sensor_id       Int          @unique
   plant           String
   plant_season    String
@@ -57,7 +57,7 @@ model crop_infos {
 }
 
 model irrigation_fertilizations {
-  id                   Int          @id @default(autoincrement())
+  id                   Int          @id @default(autoincrement()) @unique
   sensor_id            Int          @unique
   irrigation_frequency Int?
   fertilizer_usage     Float?
@@ -68,7 +68,7 @@ model irrigation_fertilizations {
 }
 
 model geo_environmentals {
-  id                   Int          @id @default(autoincrement())
+  id                   Int          @id @default(autoincrement()) @unique
   sensor_id            Int          @unique
   urban_area_proximity Float?
   sensor               sensor_datas @relation(fields: [sensor_id], references: [id])
@@ -77,7 +77,7 @@ model geo_environmentals {
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String          @id @default(cuid()) @unique
   name          String?
   username      String?         @unique
   email         String?         @unique
@@ -94,7 +94,7 @@ model User {
 }
 
 model Account {
-  id                       String  @id @default(cuid())
+  id                       String  @id @default(cuid()) @unique
   userId                   String  @unique
   type                     String
   provider                 String
@@ -117,7 +117,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(cuid()) @unique
   sessionToken String   @unique
   userId       String
   expires      DateTime

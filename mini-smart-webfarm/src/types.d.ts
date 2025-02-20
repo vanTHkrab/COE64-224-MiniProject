@@ -8,6 +8,7 @@ declare module "next-auth" {
         name: string
         email: string
         image: string
+
     }
     /**
      * The shape of the account object returned in the OAuth providers' `account` callback,

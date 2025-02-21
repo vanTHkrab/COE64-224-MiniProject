@@ -1,14 +1,22 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
 
-    const sensorData = await prisma.sensor_datas.findMany();
+    try {
+        const sensorData = await prisma.sensor_datas.findMany({
+            orderBy: {timestamp: 'asc'},
+            take: 24,
+        });
 
-    if (!sensorData) {
-        return NextResponse.json({ message: "No data found" }, { status: 404 });
+        if (!sensorData) {
+            throw new Error('Sensor data not found');
+        }
+
+        return NextResponse.json(sensorData);
+    } catch (error) {
+        console.error('Error fetching sensor data:', error);
+        return NextResponse.error();
     }
-
-    return NextResponse.json(sensorData, { status: 200 });
 }
 

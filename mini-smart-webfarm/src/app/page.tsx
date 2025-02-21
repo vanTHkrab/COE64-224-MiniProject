@@ -1,8 +1,9 @@
-import { auth } from "@/auth";
 import SignIn from "@/components/sign-in";
 import UserDetail from "@/components/user-detail";
+import { auth } from "@/auth";
 
 export default async function Home() {
+
     const session = await auth();
 
     return (
@@ -12,7 +13,7 @@ export default async function Home() {
 
             <div className="basis-1/2">
 
-                <p className="text-lg font-semibold text-gray-700 mb-4 mt-32 text-center">welcome</p>
+                <p className="text-lg font-semibold text-gray-700 mb-4 mt-32 text-center">Welcome to Smart Farm</p>
                 <div className="container mt-16 mx-auto p-10 bg-white rounded-xl shadow-2xl">
                      {session ? <UserDetail /> : <SignIn />}
                 </div>

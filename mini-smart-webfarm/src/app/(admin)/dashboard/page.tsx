@@ -86,7 +86,7 @@ const SmartFarmDashboard: React.FC = () => {
                             <SensorCard
                                 icon={Wind}
                                 title="Soil Moisture"
-                                value={sensorData.length > 0 ? sensorData[0].soil_moisture.toFixed(1) : "N/A"}
+                                value={sensorData.length > 0 ? sensorData[0].soil_moisture !== null ? sensorData[0].soil_moisture.toFixed(1) : "N/A" : "N/A"}
                                 unit="%"
                             />
                         </div>

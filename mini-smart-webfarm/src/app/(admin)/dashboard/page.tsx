@@ -26,6 +26,7 @@ const SmartFarmDashboard: React.FC = () => {
     const [sensorData, setSensorData] = useState<SensorData[]>([]);
     const [chartData, setChartData] = useState<ChartData[]>([]); // ✅ ใช้ state แยกสำหรับ chart
 
+
     useEffect(() => {
         const fetchSensorData = async () => {
             try {
@@ -35,7 +36,7 @@ const SmartFarmDashboard: React.FC = () => {
                 setSensorData(data);
 
                 const formattedData: ChartData[] = data.map(entry => ({
-                    time: new Date(entry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    time: new Date(entry.timestamp).toDateString(),
                     temperature: entry.temperature,
                     humidity: entry.humidity,
                     soilMoisture: entry.soil_moisture,
@@ -93,11 +94,13 @@ const SmartFarmDashboard: React.FC = () => {
                         {/* Chart Section */}
                         <div className="overflow-hidden bg-white rounded-lg shadow">
                             <div className="p-4 sm:p-6">
-                                <h2 className="text-lg sm:text-xl font-semibold">Sensor Readings (24h)</h2>
+                                <h2 className="text-lg sm:text-xl font-semibold">Sensor Readings</h2>
                             </div>
                             <div className="p-4 sm:p-6">
                                 {chartData.length > 0 ? (
-                                    <ResponsiveChart data={chartData} />
+                                    <ResponsiveChart data={
+                                        chartData.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime())
+                                    } />
                                 ) : (
                                     <p className="text-center text-gray-500">Loading data...</p>
                                 )}

@@ -3,8 +3,6 @@ import Google from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
-import Passkey from "next-auth/providers/passkey";
-import bcrypt from "bcryptjs";
 import { ZodError } from "zod";
 import { signInSchema } from "@/lib/zod";
 import { verifyPassword } from "@/utils/password";
@@ -66,7 +64,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 }
             },
         }),
-        // Passkey,
     ],
     secret: process.env.AUTH_SECRET,
     callbacks: {
@@ -75,7 +72,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (pathname === "/middleware-example") return !!auth;
             return true;
         },
-        async jwt({ token, user, account }) {
+        async jwt({ token, account }) {
             if (account) {
                 token.accessToken = <string>account.access_token;
             }

@@ -9,7 +9,7 @@ import { Search } from "lucide-react";
 import { AgGridReact } from "ag-grid-react";
 import { ColDef } from "ag-grid-community";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import { AllCommunityModule } from "ag-grid-community";
 
 interface Plant {
     id: number;
@@ -27,7 +27,7 @@ const ViewPlantsPage = () => {
     const [plants, setPlants] = useState<Plant[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         fetchPlants().then();
@@ -35,9 +35,9 @@ const ViewPlantsPage = () => {
 
     const fetchPlants = async () => {
         try {
-            const response = await fetch('/api/plants');
+            const response = await fetch("/api/plants");
             if (!response.ok) {
-                throw new Error('Failed to fetch plants');
+                throw new Error("Failed to fetch plants");
             }
             const data: Plant[] = await response.json();
             setPlants(data);
@@ -48,6 +48,18 @@ const ViewPlantsPage = () => {
         }
     };
 
+    // ฟังก์ชันจัดการเมื่อกดปุ่ม Edit / Delete
+    const handleEdit = (id: number) => {
+        console.log("Edit plant with ID:", id);
+        // TODO: เรียก Modal หรือ navigate ไปหน้าแก้ไข
+    };
+
+    const handleDelete = (id: number) => {
+        console.log("Delete plant with ID:", id);
+        // TODO: ยืนยันการลบ / เรียก API ลบ
+    };
+
+    // คอลัมน์ในตาราง
     const columns: ColDef<Plant>[] = [
         { headerName: "Sensor ID", field: "sensor_id", sortable: true, filter: true },
         { headerName: "Plant", field: "plant", sortable: true, filter: true },
@@ -59,21 +71,37 @@ const ViewPlantsPage = () => {
             field: "pest_pressure",
             sortable: true,
             filter: true,
-            valueFormatter: params => params.value !== undefined ? params.value.toFixed(2) : "N/A"
+            valueFormatter: (params) =>
+                params.value !== undefined ? params.value.toFixed(2) : "N/A",
         },
         {
             headerName: "Crop Density",
             field: "crop_density",
             sortable: true,
             filter: true,
-            valueFormatter: params => params.value !== undefined ? params.value.toFixed(2) : "N/A"
-        }
+            valueFormatter: (params) =>
+                params.value !== undefined ? params.value.toFixed(2) : "N/A",
+        },
+        {
+            headerName: "Actions",
+            cellRenderer: "actionsRenderer",
+            cellRendererParams: {
+                onEdit: handleEdit,
+                onDelete: handleDelete,
+            },
+            filter: false,
+            sortable: false,
+            width: 150,
+        },
     ];
 
-    const filteredPlants = plants.filter(plant =>
-        plant.plant.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        plant.plant_season.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        plant.plantation_area.toLowerCase().includes(searchTerm.toLowerCase())
+    // ค้นหา
+    const filteredPlants = plants.filter(
+        (plant) =>
+            plant.sensor_id.toString().includes(searchTerm) ||
+            plant.plant.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            plant.plant_season.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            plant.plantation_area.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (error) {
@@ -116,20 +144,23 @@ const ViewPlantsPage = () => {
                         {loading ? (
                             <div className="text-center py-4">Loading...</div>
                         ) : (
-                            <div className="ag-theme-alpine" style={{ height: "500px", width: "100%" }}>
+                            <div
+                                className="ag-theme-alpine"
+                                style={{ height: "600px", width: "100%" }}
+                            >
                                 <AgGridReact
                                     modules={[AllCommunityModule]}
                                     columnDefs={columns}
                                     rowData={filteredPlants}
                                     pagination={true}
                                     paginationPageSize={20}
+                                    detailRowAutoHeight={true}
                                 />
                             </div>
                         )}
                     </CardContent>
                 </Card>
             </main>
-
         </div>
     );
 };

@@ -7,8 +7,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model farm_datas {
+  id Int @id @default(autoincrement())
+
+  sensor_datasId Int          @unique
+  sensor_data    sensor_datas @relation(fields: [sensor_datasId], references: [id], onDelete: Cascade)
+
+  soil_compositionsId Int               @unique
+  soil_composition    soil_compositions @relation(fields: [soil_compositionsId], references: [id], onDelete: Cascade)
+
+  irrigation_fertilizationsId Int                       @unique
+  irrigation_fertilization    irrigation_fertilizations @relation(fields: [irrigation_fertilizationsId], references: [id], onDelete: Cascade)
+
+  crop_infosId Int        @unique
+  crop_info    crop_infos @relation(fields: [crop_infosId], references: [id], onDelete: Cascade)
+
+  geo_environmentalsId Int                @unique
+  geo_environmental    geo_environmentals @relation(fields: [geo_environmentalsId], references: [id], onDelete: Cascade)
+
+  @@map("farm_datas")
+}
+
+model growth_stages {
+  growth_stage String       @unique
+  plant_season String       @unique
+  crop_infos   crop_infos[]
+
+  @@id([growth_stage, plant_season])
+  @@map("growth_stage")
+}
+
+model plantation_area_types {
+  plantation_area   String              @unique
+  soil_type         String              @unique
+  soil_compositions soil_compositions[]
+  crop_infos        crop_infos[]
+
+  @@id([plantation_area, soil_type])
+  @@map("plantation_area_types")
+}
+
 model sensor_datas {
-  id                     Int      @id @default(autoincrement()) @unique
+  id                     Int      @id @default(autoincrement())
   timestamp              DateTime @default(now())
   temperature            Float?
   humidity               Float?
@@ -21,63 +61,62 @@ model sensor_datas {
   frost_risk             Float?
   water_usage_efficiency Float?
 
-  soil_compositions         soil_compositions?
-  crop_infos                crop_infos?
-  irrigation_fertilizations irrigation_fertilizations?
-  geo_environmentals        geo_environmentals?
+  farm_data farm_datas?
 
   @@map("sensor_datas")
 }
 
 model soil_compositions {
-  id             Int          @id @default(autoincrement()) @unique
-  sensor_id      Int          @unique
+  id             Int    @id @default(autoincrement())
   nitrogen       Int
   phosphorus     Int
   potassium      Int
   organic_matter Float?
   soil_type      String
-  sensor         sensor_datas @relation(fields: [sensor_id], references: [id])
+
+  soil_types plantation_area_types @relation(fields: [soil_type], references: [soil_type], onDelete: Cascade, onUpdate: Cascade)
+  farm_data  farm_datas?
 
   @@map("soil_compositions")
 }
 
-model crop_infos {
-  id              Int          @id @default(autoincrement()) @unique
-  sensor_id       Int          @unique
-  plant           String
-  plant_season    String
-  plantation_area String
-  growth_stage    String
-  pest_pressure   Float?
-  crop_density    Float?
-  sensor          sensor_datas @relation(fields: [sensor_id], references: [id])
-
-  @@map("crop_infos")
-}
-
 model irrigation_fertilizations {
-  id                   Int          @id @default(autoincrement()) @unique
-  sensor_id            Int          @unique
+  id                   Int    @id @default(autoincrement())
   irrigation_frequency Int?
   fertilizer_usage     Float?
   water_source_type    String
-  sensor               sensor_datas @relation(fields: [sensor_id], references: [id])
+
+  farm_data farm_datas?
 
   @@map("irrigation_fertilizations")
 }
 
+model crop_infos {
+  id              Int    @id @default(autoincrement())
+  plant           String
+  growth_stage    String
+  plantation_area String
+  pest_pressure   Float?
+  crop_density    Float?
+
+  growth_stage_rel    growth_stages         @relation(fields: [growth_stage], references: [growth_stage], onDelete: Cascade, onUpdate: Cascade)
+  plantation_area_rel plantation_area_types @relation(fields: [plantation_area], references: [plantation_area], onDelete: Cascade, onUpdate: Cascade)
+  farm_data           farm_datas?
+
+  @@map("crop_infos")
+}
+
 model geo_environmentals {
-  id                   Int          @id @default(autoincrement()) @unique
-  sensor_id            Int          @unique
+  id                   Int    @id @default(autoincrement())
   urban_area_proximity Float?
-  sensor               sensor_datas @relation(fields: [sensor_id], references: [id])
+
+  farm_data farm_datas?
 
   @@map("geo_environmentals")
 }
 
 model User {
-  id            String          @id @default(cuid()) @unique
+  id            String          @id @unique @default(cuid())
   name          String?
   username      String?         @unique
   email         String?         @unique
@@ -94,7 +133,7 @@ model User {
 }
 
 model Account {
-  id                       String  @id @default(cuid()) @unique
+  id                       String  @id @unique @default(cuid())
   userId                   String  @unique
   type                     String
   provider                 String
@@ -117,7 +156,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid()) @unique
+  id           String   @id @unique @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime

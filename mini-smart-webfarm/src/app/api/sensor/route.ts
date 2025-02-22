@@ -1,17 +1,19 @@
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
-
     try {
-        const sensorData = await prisma.sensor_datas.findMany({
-            orderBy: {timestamp: 'asc'},
-            take: 24,
-        });
+        const now = new Date();
 
-        if (!sensorData) {
-            throw new Error('Sensor data not found');
-        }
+        const sensorData = await prisma.sensor_datas.findMany({
+            where: {
+                timestamp: {
+                    lte: now,
+                },
+            },
+            orderBy: { id: 'desc' },
+            take: 12,
+        });
 
         return NextResponse.json(sensorData);
     } catch (error) {
@@ -19,4 +21,3 @@ export async function GET() {
         return NextResponse.error();
     }
 }
-

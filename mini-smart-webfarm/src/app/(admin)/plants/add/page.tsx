@@ -69,7 +69,7 @@ const AddPlantPage = () => {
     };
 
     return (
-        <div>
+        <div className="min-h-screen bg-gray-50">
             <Header onMenuClick={() => setSidebarOpen(true)} />
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 

@@ -50,7 +50,6 @@ const AddPlantPage = () => {
                 throw new Error('Failed to create plant info');
             }
 
-            // Reset form after successful submission
             setFormData({
                 sensor_id: '',
                 plant: '',
@@ -69,118 +68,64 @@ const AddPlantPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-amber-100">
             <Header onMenuClick={() => setSidebarOpen(true)} />
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
             <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 p-6 overflow-auto">
-                <Card className="max-w-2xl mx-auto">
-                    <CardHeader>
-                        <CardTitle>Add New Plant Information</CardTitle>
+                <Card className="max-w-2xl mx-auto shadow-lg bg-white rounded-lg border border-green-200">
+                    <CardHeader className="bg-green-600 text-white py-4 rounded-t-lg">
+                        <CardTitle className="text-lg font-semibold">Add New Plant Information</CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-6">
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="sensor_id">Sensor ID</Label>
-                                <Input
-                                    id="sensor_id"
-                                    name="sensor_id"
-                                    type="number"
-                                    value={formData.sensor_id}
-                                    onChange={handleInputChange}
-                                    required
-                                    className="w-full"
-                                />
-                            </div>
+                            {[
+                                { label: 'Sensor ID', name: 'sensor_id', type: 'number' },
+                                { label: 'Plant Name', name: 'plant', type: 'text' },
+                                { label: 'Plantation Area', name: 'plantation_area', type: 'text' },
+                                { label: 'Pest Pressure', name: 'pest_pressure', type: 'number', step: '0.1' },
+                                { label: 'Crop Density', name: 'crop_density', type: 'number', step: '0.1' }
+                            ].map(({ label, name, type, step }) => (
+                                <div key={name} className="space-y-2">
+                                    <Label htmlFor={name} className="text-green-700 font-medium">{label}</Label>
+                                    <Input
+                                        id={name}
+                                        name={name}
+                                        type={type}
+                                        step={step || undefined}
+                                        value={formData[name]}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="w-full border border-green-300 focus:ring-green-500 focus:border-green-500 rounded-md"
+                                    />
+                                </div>
+                            ))}
 
-                            <div className="space-y-2">
-                                <Label htmlFor="plant">Plant Name</Label>
-                                <Input
-                                    id="plant"
-                                    name="plant"
-                                    value={formData.plant}
-                                    onChange={handleInputChange}
-                                    required
-                                    className="w-full"
-                                />
-                            </div>
+                            {[
+                                { label: 'Plant Season', name: 'plant_season', options: ['spring', 'summer', 'fall', 'winter'] },
+                                { label: 'Growth Stage', name: 'growth_stage', options: ['seedling', 'vegetative', 'flowering', 'fruiting', 'mature'] }
+                            ].map(({ label, name, options }) => (
+                                <div key={name} className="space-y-2">
+                                    <Label htmlFor={name} className="text-green-700 font-medium">{label}</Label>
+                                    <Select
+                                        value={formData[name]}
+                                        onValueChange={(value) => handleSelectChange(value, name)}
+                                    >
+                                        <SelectTrigger className="w-full border border-green-300 focus:ring-green-500 focus:border-green-500 rounded-md">
+                                            <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-white shadow-md rounded-md">
+                                            {options.map(option => (
+                                                <SelectItem key={option} value={option} className="text-green-700">
+                                                    {option.charAt(0).toUpperCase() + option.slice(1)}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            ))}
 
-                            <div className="space-y-2">
-                                <Label htmlFor="plant_season">Plant Season</Label>
-                                <Select
-                                    value={formData.plant_season}
-                                    onValueChange={(value) => handleSelectChange(value, 'plant_season')}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select season" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="spring">Spring</SelectItem>
-                                        <SelectItem value="summer">Summer</SelectItem>
-                                        <SelectItem value="fall">Fall</SelectItem>
-                                        <SelectItem value="winter">Winter</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="plantation_area">Plantation Area</Label>
-                                <Input
-                                    id="plantation_area"
-                                    name="plantation_area"
-                                    value={formData.plantation_area}
-                                    onChange={handleInputChange}
-                                    required
-                                    className="w-full"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="growth_stage">Growth Stage</Label>
-                                <Select
-                                    value={formData.growth_stage}
-                                    onValueChange={(value) => handleSelectChange(value, 'growth_stage')}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select growth stage" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="seedling">Seedling</SelectItem>
-                                        <SelectItem value="vegetative">Vegetative</SelectItem>
-                                        <SelectItem value="flowering">Flowering</SelectItem>
-                                        <SelectItem value="fruiting">Fruiting</SelectItem>
-                                        <SelectItem value="mature">Mature</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="pest_pressure">Pest Pressure</Label>
-                                <Input
-                                    id="pest_pressure"
-                                    name="pest_pressure"
-                                    type="number"
-                                    step="0.1"
-                                    value={formData.pest_pressure}
-                                    onChange={handleInputChange}
-                                    className="w-full"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="crop_density">Crop Density</Label>
-                                <Input
-                                    id="crop_density"
-                                    name="crop_density"
-                                    type="number"
-                                    step="0.1"
-                                    value={formData.crop_density}
-                                    onChange={handleInputChange}
-                                    className="w-full"
-                                />
-                            </div>
-
-                            <Button type="submit" className="w-full">
+                            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg shadow-md">
                                 Add Plant Information
                             </Button>
                         </form>

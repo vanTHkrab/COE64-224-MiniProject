@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BarChart3, ChevronDown, Droplet, Home, Leaf, Map, Settings } from "lucide-react";
+import { BarChart3, ChevronDown, Droplet, Home, Leaf, Map, Settings, CloudSunRain } from "lucide-react";
 import React, { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -45,6 +45,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 { name: 'Trends', path: '/analytics/trends' },
                 { name: 'Forecasts', path: '/analytics/forecasts' },
             ]
+        },
+        {
+            title: 'Weather Information',
+            icon: <CloudSunRain className="w-5 h-5" />,
+            path: '/weather'
         },
         { title: 'Settings', icon: <Settings className="w-5 h-5" />, path: '/settings' },
     ];

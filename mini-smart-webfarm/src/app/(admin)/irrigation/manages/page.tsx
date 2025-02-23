@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,13 +7,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Droplet, Flower2, Plus, Pencil, Trash2 } from "lucide-react";
 
-// Component สำหรับจัดการตารางการรดน้ำและการให้ปุ๋ย
 const IrrigationFertilization = () => {
     const [activeTab, setActiveTab] = useState('irrigation');
     const [showAddForm, setShowAddForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
 
-    // ข้อมูลตัวอย่าง (ในโปรเจคจริงข้อมูลจะมาจาก backend)
+    useEffect(() => {
+        // async function fetchData =
+        const fetchData = async () => {
+            const response = await fetch('/api/irrigation',{
+                method: "GET"
+                });
+            console.log(response);
+            const data = await response.json();
+            console.log(data);
+        }
+
+        fetchData().then();
+    }, []);
+
+
     const [schedules, setSchedules] = useState({
         irrigation: [
             {
@@ -300,10 +313,6 @@ const IrrigationFertilization = () => {
                                     {activeTab === 'irrigation' ? (
                                         <>
                                             <div className="flex justify-between">
-                                                <span>Duration:</span>
-                                                <span>{item.duration} minutes</span>
-                                            </div>
-                                            <div className="flex justify-between">
                                                 <span>Water Amount:</span>
                                                 <span>{item.waterAmount} liters</span>
                                             </div>
@@ -336,7 +345,7 @@ const IrrigationFertilization = () => {
 };
 
 // Component หน้า BasePage ที่ประกอบด้วย Header, Sidebar และแสดง IrrigationFertilization ใน main area
-const BasePage = () => {
+const IrrigationManagePage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
@@ -351,4 +360,4 @@ const BasePage = () => {
     );
 };
 
-export default BasePage;
+export default IrrigationManagePage;

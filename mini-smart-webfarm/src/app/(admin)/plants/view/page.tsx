@@ -39,6 +39,7 @@ const ViewPlantsPage = () => {
                 throw new Error("Failed to fetch plants");
             }
             const data: Plant[] = await response.json();
+            console.log("Fetched plants:", data);
             setPlants(data);
             setLoading(false);
         } catch (err) {
@@ -47,22 +48,19 @@ const ViewPlantsPage = () => {
         }
     };
 
-    // ฟังก์ชันจัดการเมื่อกดปุ่ม Edit / Delete
     const handleEdit = (id: number) => {
         console.log("Edit plant with ID:", id);
-        // TODO: เรียก Modal หรือ navigate ไปหน้าแก้ไข
     };
 
     const handleDelete = (id: number) => {
         console.log("Delete plant with ID:", id);
-        // TODO: ยืนยันการลบ / เรียก API ลบ
     };
 
-    // คอลัมน์ในตาราง
     const columns: ColDef<Plant>[] = [
+        { headerName: "ID", field: "id", sortable: true, filter: true },
         { headerName: "Plant", field: "plant", sortable: true, filter: true },
-        { headerName: "Season", field: "plant_season", sortable: true, filter: true },
         { headerName: "Area", field: "plantation_area", sortable: true, filter: true },
+        { headerName: "Season", field: "plant_season", sortable: true, filter: true },
         { headerName: "Growth Stage", field: "growth_stage", sortable: true, filter: true },
         {
             headerName: "Pest Pressure",
@@ -93,10 +91,9 @@ const ViewPlantsPage = () => {
         },
     ];
 
-    // ค้นหา
     const filteredPlants = plants.filter(
         (plant) =>
-            plant.sensor_id.toString().includes(searchTerm) ||
+            plant.id.toString().includes(searchTerm) ||
             plant.plant.toLowerCase().includes(searchTerm.toLowerCase()) ||
             plant.plant_season.toLowerCase().includes(searchTerm.toLowerCase()) ||
             plant.plantation_area.toLowerCase().includes(searchTerm.toLowerCase())

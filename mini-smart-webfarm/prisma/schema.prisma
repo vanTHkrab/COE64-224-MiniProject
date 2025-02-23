@@ -8,22 +8,17 @@ datasource db {
 }
 
 model farm_datas {
-  id Int @id @default(autoincrement())
-
-  sensor_datasId Int          @unique
-  sensor_data    sensor_datas @relation(fields: [sensor_datasId], references: [id], onDelete: Cascade)
-
-  soil_compositionsId Int               @unique
-  soil_composition    soil_compositions @relation(fields: [soil_compositionsId], references: [id], onDelete: Cascade)
-
+  id                          Int                       @id @default(autoincrement())
+  sensor_datasId              Int                       @unique
+  soil_compositionsId         Int                       @unique
   irrigation_fertilizationsId Int                       @unique
+  crop_infosId                Int                       @unique
+  geo_environmentalsId        Int                       @unique
+  crop_info                   crop_infos                @relation(fields: [crop_infosId], references: [id], onDelete: Cascade)
+  geo_environmental           geo_environmentals        @relation(fields: [geo_environmentalsId], references: [id], onDelete: Cascade)
   irrigation_fertilization    irrigation_fertilizations @relation(fields: [irrigation_fertilizationsId], references: [id], onDelete: Cascade)
-
-  crop_infosId Int        @unique
-  crop_info    crop_infos @relation(fields: [crop_infosId], references: [id], onDelete: Cascade)
-
-  geo_environmentalsId Int                @unique
-  geo_environmental    geo_environmentals @relation(fields: [geo_environmentalsId], references: [id], onDelete: Cascade)
+  sensor_data                 sensor_datas              @relation(fields: [sensor_datasId], references: [id], onDelete: Cascade)
+  soil_composition            soil_compositions         @relation(fields: [soil_compositionsId], references: [id], onDelete: Cascade)
 
   @@map("farm_datas")
 }
@@ -40,16 +35,16 @@ model growth_stages {
 model plantation_area_types {
   plantation_area   String              @unique
   soil_type         String              @unique
-  soil_compositions soil_compositions[]
   crop_infos        crop_infos[]
+  soil_compositions soil_compositions[]
 
   @@id([plantation_area, soil_type])
   @@map("plantation_area_types")
 }
 
 model sensor_datas {
-  id                     Int      @id @default(autoincrement())
-  timestamp              DateTime @default(now())
+  id                     Int         @id @default(autoincrement())
+  timestamp              DateTime    @default(now())
   temperature            Float?
   humidity               Float?
   ph                     Float?
@@ -60,57 +55,53 @@ model sensor_datas {
   co2_concentration      Float?
   frost_risk             Float?
   water_usage_efficiency Float?
-
-  farm_data farm_datas?
+  farm_data              farm_datas?
 
   @@map("sensor_datas")
 }
 
 model soil_compositions {
-  id             Int    @id @default(autoincrement())
+  id             Int                   @id @default(autoincrement())
   nitrogen       Int
   phosphorus     Int
   potassium      Int
   organic_matter Float?
   soil_type      String
-
-  soil_types plantation_area_types @relation(fields: [soil_type], references: [soil_type], onDelete: Cascade, onUpdate: Cascade)
-  farm_data  farm_datas?
+  farm_data      farm_datas?
+  soil_types     plantation_area_types @relation(fields: [soil_type], references: [soil_type], onDelete: Cascade)
 
   @@map("soil_compositions")
 }
 
 model irrigation_fertilizations {
-  id                   Int    @id @default(autoincrement())
+  id                   Int         @id @default(autoincrement())
   irrigation_frequency Int?
   fertilizer_usage     Float?
   water_source_type    String
-
-  farm_data farm_datas?
+  timestamp            DateTime    @default(now())
+  farm_data            farm_datas?
 
   @@map("irrigation_fertilizations")
 }
 
 model crop_infos {
-  id              Int    @id @default(autoincrement())
-  plant           String
-  growth_stage    String
-  plantation_area String
-  pest_pressure   Float?
-  crop_density    Float?
-
-  growth_stage_rel    growth_stages         @relation(fields: [growth_stage], references: [growth_stage], onDelete: Cascade, onUpdate: Cascade)
-  plantation_area_rel plantation_area_types @relation(fields: [plantation_area], references: [plantation_area], onDelete: Cascade, onUpdate: Cascade)
+  id                  Int                   @id @default(autoincrement())
+  plant               String
+  growth_stage        String
+  plantation_area     String
+  pest_pressure       Float?
+  crop_density        Float?
+  growth_stage_rel    growth_stages         @relation(fields: [growth_stage], references: [growth_stage], onDelete: Cascade)
+  plantation_area_rel plantation_area_types @relation(fields: [plantation_area], references: [plantation_area], onDelete: Cascade)
   farm_data           farm_datas?
 
   @@map("crop_infos")
 }
 
 model geo_environmentals {
-  id                   Int    @id @default(autoincrement())
+  id                   Int         @id @default(autoincrement())
   urban_area_proximity Float?
-
-  farm_data farm_datas?
+  farm_data            farm_datas?
 
   @@map("geo_environmentals")
 }
@@ -123,33 +114,30 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  accounts      Account[]
-  sessions      Session[]
-  // Optional for WebAuthn support
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  accounts      Account?
   Authenticator Authenticator[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  sessions      Session[]
 }
 
 model Account {
-  id                       String  @id @unique @default(cuid())
-  userId                   String  @unique
+  id                       String   @id @unique @default(cuid())
+  userId                   String   @unique
   type                     String
   provider                 String
   providerAccountId        String
-  refresh_token            String? @db.Text
-  access_token             String? @db.Text
+  refresh_token            String?
+  access_token             String?
   expires_at               Int?
   token_type               String?
   scope                    String?
-  id_token                 String? @db.Text
+  id_token                 String?
   session_state            String?
   refresh_token_expires_in Int?
-  user                     User?   @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  user                     User     @relation(fields: [userId], references: [id])
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -160,10 +148,9 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@index([userId])
 }
@@ -176,7 +163,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// Optional for WebAuthn support
 model Authenticator {
   credentialID         String  @unique
   userId               String
@@ -186,8 +172,7 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, credentialID])
 }

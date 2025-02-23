@@ -21,25 +21,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             submenu: [
                 { name: 'Add Plant', path: '/plants/add' },
                 { name: 'View Plants', path: '/plants/view' },
-                { name: 'Plant Health', path: '/plants/health' },
             ]
         },
         {
             title: 'Farm Areas',
             icon: <Map className="w-5 h-5" />,
             submenu: [
-                { name: 'Area Overview', path: '/areas/overview' },
-                { name: 'Add Area', path: '/areas/add' },
-                { name: 'Manage Areas', path: '/areas/manage' },
+                { name: 'Manage Areas', path: '/areas/add' },
             ]
         },
         {
             title: 'Irrigation',
             icon: <Droplet className="w-5 h-5" />,
             submenu: [
-                { name: 'Schedules', path: '/irrigation/schedules' },
-                { name: 'Water Usage', path: '/irrigation/usage' },
-                { name: 'Settings', path: '/irrigation/settings' },
+                { name: 'Manage irrigation', path: '/irrigation/manages' },
             ]
         },
         {

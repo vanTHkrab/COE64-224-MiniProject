@@ -22,9 +22,6 @@ const AuthPage = () => {
                     >
                         <h2 className="text-2xl font-bold mb-6">Sign In</h2>
 
-
-
-
                         <div className="flex gap-4 mb-6">
                             <button className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-purple-500 hover:text-purple-500 transition-colors duration-300">
                                 <span className="text-xl">G</span>

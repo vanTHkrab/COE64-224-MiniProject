@@ -13,7 +13,6 @@ import { AllCommunityModule } from "ag-grid-community";
 
 interface Plant {
     id: number;
-    sensor_id: number;
     plant: string;
     plant_season: string;
     plantation_area: string;
@@ -61,7 +60,6 @@ const ViewPlantsPage = () => {
 
     // คอลัมน์ในตาราง
     const columns: ColDef<Plant>[] = [
-        { headerName: "Sensor ID", field: "sensor_id", sortable: true, filter: true },
         { headerName: "Plant", field: "plant", sortable: true, filter: true },
         { headerName: "Season", field: "plant_season", sortable: true, filter: true },
         { headerName: "Area", field: "plantation_area", sortable: true, filter: true },

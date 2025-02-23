@@ -1,4 +1,4 @@
-import NextAuth, { type DefaultSession } from "next-auth";
+import NextAuth, { DefaultSession } from "next-auth";
 import Google from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -16,7 +16,7 @@ class InvalidLoginError extends Error {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
-    debug: false,
+    debug: true,
     providers: [
         Google({
             clientId: process.env.GOOGLE_CLIENT_ID,

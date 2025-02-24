@@ -33,7 +33,7 @@ const WeatherPage = () => {
 
     useEffect(() => {
         fetchWeatherData().then();
-        const interval = setInterval(fetchWeatherData, 300000); // อัปเดตทุก 5 นาที
+        const interval = setInterval(fetchWeatherData, 300000); // Update every 5 minutes
         return () => clearInterval(interval);
     }, []);
 
@@ -62,101 +62,105 @@ const WeatherPage = () => {
     const getWeatherIcon = (condition: string) => {
         switch (condition.toLowerCase()) {
             case "clear":
-                return <Sun className="h-12 w-12 text-amber-600" />;
+                return <Sun className="h-12 w-12 text-amber-500" />;
             case "clouds":
-                return <Cloud className="h-12 w-12 text-stone-600" />;
+                return <Cloud className="h-12 w-12 text-gray-500" />;
             case "rain":
             case "drizzle":
             case "thunderstorm":
-                return <CloudRain className="h-12 w-12 text-blue-600" />;
+                return <CloudRain className="h-12 w-12 text-blue-500" />;
             default:
-                return <Sun className="h-12 w-12 text-amber-600" />;
+                return <Sun className="h-12 w-12 text-amber-500" />;
         }
     };
 
     return (
-        <div className="bg-white">
+        <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-amber-100">
             <Header onMenuClick={() => setIsSidebarOpen(true)} />
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-            <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 p-6 overflow-auto bg-white">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-                        <div>
-                            <h2 className="text-3xl font-bold mb-2 text-emerald-900">Farm Weather Dashboard</h2>
-                            <p className="text-emerald-700">
-                                Current conditions in {CITY_NAME}
-                            </p>
-                        </div>
-                        <div className="flex items-center mt-4 md:mt-0 bg-emerald-50 rounded-lg p-4">
-                            {getWeatherIcon(weatherData.forecast)}
-                            <div className="ml-4">
-                                <p className="text-lg font-semibold text-emerald-900">{weatherData.conditions}</p>
-                                <p className="text-sm text-emerald-700">
-                                    Last updated: {weatherData.lastUpdated}
+            <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 p-6 overflow-auto">
+                <Card className="max-w-7xl mx-auto shadow-lg bg-white rounded-lg border border-green-200">
+                    <CardHeader className="bg-green-600 text-white py-4 rounded-t-lg">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+                            <div>
+                                <CardTitle className="text-2xl font-bold">Farm Weather Dashboard</CardTitle>
+                                <p className="text-green-100 mt-1">
+                                    Current conditions in {CITY_NAME || "your location"}
                                 </p>
                             </div>
+                            <div className="flex items-center mt-4 md:mt-0 bg-white/10 rounded-lg p-4">
+                                {getWeatherIcon(weatherData.forecast)}
+                                <div className="ml-4">
+                                    <p className="text-lg font-semibold">{weatherData.conditions}</p>
+                                    <p className="text-sm text-green-100">
+                                        Last updated: {weatherData.lastUpdated}
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </CardHeader>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <Card className="border border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-lg font-semibold text-emerald-800">Temperature</CardTitle>
-                                <Thermometer className="h-6 w-6 text-amber-600" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="mt-2 flex items-baseline">
-                                    <div className="text-4xl font-bold text-emerald-900">{weatherData.temperature}</div>
-                                    <div className="ml-1 text-xl text-emerald-600">°C</div>
-                                </div>
-                                <p className="mt-2 text-sm text-emerald-600">Current temperature</p>
-                            </CardContent>
-                        </Card>
+                    <CardContent className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <Card className="shadow-md hover:shadow-lg transition-shadow border border-green-200">
+                                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                    <CardTitle className="text-lg font-semibold text-green-800">Temperature</CardTitle>
+                                    <Thermometer className="h-6 w-6 text-red-500" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="mt-2 flex items-baseline">
+                                        <div className="text-4xl font-bold text-green-900">{weatherData.temperature}</div>
+                                        <div className="ml-1 text-xl text-green-600">°C</div>
+                                    </div>
+                                    <p className="mt-2 text-sm text-green-600">Current temperature</p>
+                                </CardContent>
+                            </Card>
 
-                        <Card className="border border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-lg font-semibold text-emerald-800">Humidity</CardTitle>
-                                <Droplets className="h-6 w-6 text-blue-600" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="mt-2 flex items-baseline">
-                                    <div className="text-4xl font-bold text-emerald-900">{weatherData.humidity}</div>
-                                    <div className="ml-1 text-xl text-emerald-600">%</div>
-                                </div>
-                                <p className="mt-2 text-sm text-emerald-600">Relative humidity</p>
-                            </CardContent>
-                        </Card>
+                            <Card className="shadow-md hover:shadow-lg transition-shadow border border-green-200">
+                                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                    <CardTitle className="text-lg font-semibold text-green-800">Humidity</CardTitle>
+                                    <Droplets className="h-6 w-6 text-blue-500" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="mt-2 flex items-baseline">
+                                        <div className="text-4xl font-bold text-green-900">{weatherData.humidity}</div>
+                                        <div className="ml-1 text-xl text-green-600">%</div>
+                                    </div>
+                                    <p className="mt-2 text-sm text-green-600">Relative humidity</p>
+                                </CardContent>
+                            </Card>
 
-                        <Card className="border border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-lg font-semibold text-emerald-800">Precipitation</CardTitle>
-                                <Cloud className="h-6 w-6 text-stone-600" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="mt-2 flex items-baseline">
-                                    <div className="text-4xl font-bold text-emerald-900">{weatherData.precipitation}</div>
-                                    <div className="ml-1 text-xl text-emerald-600">mm</div>
-                                </div>
-                                <p className="mt-2 text-sm text-emerald-600">Last 1 hour</p>
-                            </CardContent>
-                        </Card>
+                            <Card className="shadow-md hover:shadow-lg transition-shadow border border-green-200">
+                                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                    <CardTitle className="text-lg font-semibold text-green-800">Precipitation</CardTitle>
+                                    <Cloud className="h-6 w-6 text-gray-500" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="mt-2 flex items-baseline">
+                                        <div className="text-4xl font-bold text-green-900">{weatherData.precipitation}</div>
+                                        <div className="ml-1 text-xl text-green-600">mm</div>
+                                    </div>
+                                    <p className="mt-2 text-sm text-green-600">Last 1 hour</p>
+                                </CardContent>
+                            </Card>
 
-                        <Card className="border border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-lg font-semibold text-emerald-800">Wind Speed</CardTitle>
-                                <Wind className="h-6 w-6 text-teal-600" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="mt-2 flex items-baseline">
-                                    <div className="text-4xl font-bold text-emerald-900">{weatherData.windSpeed}</div>
-                                    <div className="ml-1 text-xl text-emerald-600">km/h</div>
-                                </div>
-                                <p className="mt-2 text-sm text-emerald-600">Current wind speed</p>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
+                            <Card className="shadow-md hover:shadow-lg transition-shadow border border-green-200">
+                                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                    <CardTitle className="text-lg font-semibold text-green-800">Wind Speed</CardTitle>
+                                    <Wind className="h-6 w-6 text-teal-500" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="mt-2 flex items-baseline">
+                                        <div className="text-4xl font-bold text-green-900">{weatherData.windSpeed}</div>
+                                        <div className="ml-1 text-xl text-green-600">km/h</div>
+                                    </div>
+                                    <p className="mt-2 text-sm text-green-600">Current wind speed</p>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </CardContent>
+                </Card>
             </main>
         </div>
     );

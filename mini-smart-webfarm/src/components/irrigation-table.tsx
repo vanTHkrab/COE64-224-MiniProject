@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useReactTable, getCoreRowModel, flexRender, ColumnDef } from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, flexRender, getPaginationRowModel, ColumnDef } from "@tanstack/react-table";
 
 interface IrrigationData {
     id: number;
@@ -14,8 +14,6 @@ const IrrigationTable = () => {
     const [data, setData] = useState<IrrigationData[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [editRowId, setEditRowId] = useState<number | null>(null);
-    const [editValues, setEditValues] = useState<Partial<IrrigationData>>({});
 
     useEffect(() => {
         fetchData();
@@ -36,137 +34,15 @@ const IrrigationTable = () => {
         }
     };
 
-    const handleEditClick = (row: IrrigationData) => {
-        setEditRowId(row.id);
-        setEditValues({ ...row });
-    };
-
-    const handleCancelEdit = () => {
-        setEditRowId(null);
-        setEditValues({});
-    };
-
-    const handleSaveEdit = async (id: number) => {
-        try {
-            const response = await fetch(`/api/irrigation/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(editValues),
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to update data");
-            }
-
-            setData(data.map(item => (item.id === id ? { ...item, ...editValues } : item)));
-            setEditRowId(null);
-        } catch (error) {
-            setError((error as Error).message);
-        }
-    };
-
-    const handleDelete = async (id: number) => {
-        try {
-            const response = await fetch(`/api/irrigation/${id}`, { method: "DELETE" });
-            if (!response.ok) {
-                throw new Error("Failed to delete data");
-            }
-            setData(data.filter(item => item.id !== id));
-        } catch (error) {
-            setError((error as Error).message);
-        }
-    };
-
     const columns: ColumnDef<IrrigationData>[] = [
         { accessorKey: "id", header: "ID" },
-        {
-            accessorKey: "irrigation_frequency",
-            header: "Irrigation Frequency",
-            cell: ({ row }) =>
-                editRowId === row.original.id ? (
-                    <input
-                        type="number"
-                        className="w-full px-2 py-1 border rounded text-black"
-                        value={editValues.irrigation_frequency || ""}
-                        onChange={(e) => setEditValues({ ...editValues, irrigation_frequency: Number(e.target.value) })}
-                    />
-                ) : (
-                    row.original.irrigation_frequency
-                ),
-        },
-        {
-            accessorKey: "fertilizer_usage",
-            header: "Fertilizer Usage",
-            cell: ({ row }) =>
-                editRowId === row.original.id ? (
-                    <input
-                        type="number"
-                        className="w-full px-2 py-1 border rounded text-black"
-                        value={editValues.fertilizer_usage || ""}
-                        onChange={(e) => setEditValues({ ...editValues, fertilizer_usage: Number(e.target.value) })}
-                    />
-                ) : (
-                    Number(row.original.fertilizer_usage).toFixed(2)
-                ),
-        },
-        {
-            accessorKey: "water_source_type",
-            header: "Water Source",
-            cell: ({ row }) =>
-                editRowId === row.original.id ? (
-                    <input
-                        type="text"
-                        className="w-full px-2 py-1 border rounded text-black"
-                        value={editValues.water_source_type || ""}
-                        onChange={(e) => setEditValues({ ...editValues, water_source_type: e.target.value })}
-                    />
-                ) : (
-                    row.original.water_source_type
-                ),
-        },
+        { accessorKey: "irrigation_frequency", header: "Irrigation Frequency" },
+        { accessorKey: "fertilizer_usage", header: "Fertilizer Usage" },
+        { accessorKey: "water_source_type", header: "Water Source" },
         {
             accessorKey: "timestamp",
             header: "Timestamp",
             cell: ({ getValue }) => new Date(getValue() as string).toLocaleString(),
-        },
-        {
-            id: "actions",
-            header: "Actions",
-            cell: ({ row }) => (
-                <div className="flex gap-2">
-                    {editRowId === row.original.id ? (
-                        <>
-                            <button
-                                onClick={() => handleSaveEdit(row.original.id)}
-                                className="bg-green-500 text-white px-3 py-1 rounded"
-                            >
-                                Save
-                            </button>
-                            <button
-                                onClick={handleCancelEdit}
-                                className="bg-gray-500 text-white px-3 py-1 rounded"
-                            >
-                                Cancel
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <button
-                                onClick={() => handleEditClick(row.original)}
-                                className="bg-blue-500 text-white px-3 py-1 rounded"
-                            >
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => handleDelete(row.original.id)}
-                                className="bg-red-500 text-white px-3 py-1 rounded"
-                            >
-                                Delete
-                            </button>
-                        </>
-                    )}
-                </div>
-            ),
         },
     ];
 
@@ -174,6 +50,8 @@ const IrrigationTable = () => {
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        initialState: { pagination: { pageSize: 5 } }, // ตั้งค่าหน้าแรกให้มี 5 แถว
     });
 
     if (loading) return <p className="text-emerald-300">Loading...</p>;
@@ -186,10 +64,7 @@ const IrrigationTable = () => {
                 {table.getHeaderGroups().map((headerGroup) => (
                     <tr key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
-                            <th
-                                key={header.id}
-                                className="border border-emerald-600 px-4 py-3 text-emerald-100 font-semibold"
-                            >
+                            <th key={header.id} className="border border-emerald-600 px-4 py-3 text-emerald-100 font-semibold">
                                 {flexRender(header.column.columnDef.header, header.getContext())}
                             </th>
                         ))}
@@ -198,10 +73,7 @@ const IrrigationTable = () => {
                 </thead>
                 <tbody>
                 {table.getRowModel().rows.map((row) => (
-                    <tr
-                        key={row.id}
-                        className="hover:bg-gradient-to-r hover:from-emerald-800/50 hover:to-blue-800/50 transition-colors duration-150"
-                    >
+                    <tr key={row.id} className="hover:bg-gradient-to-r hover:from-emerald-800/50 hover:to-blue-800/50 transition-colors duration-150">
                         {row.getVisibleCells().map((cell) => (
                             <td key={cell.id} className="border border-emerald-700/50 px-4 py-2">
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -211,6 +83,54 @@ const IrrigationTable = () => {
                 ))}
                 </tbody>
             </table>
+
+            {/* Pagination Controls */}
+            <div className="mt-4 flex justify-between items-center">
+                <button
+                    onClick={() => table.setPageIndex(0)}
+                    disabled={!table.getCanPreviousPage()}
+                    className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50"
+                >
+                    First
+                </button>
+                <button
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                    className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50"
+                >
+                    Previous
+                </button>
+                <span>
+                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                </span>
+                <button
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                    className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50"
+                >
+                    Next
+                </button>
+                <button
+                    onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                    disabled={!table.getCanNextPage()}
+                    className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50"
+                >
+                    Last
+                </button>
+
+                {/* Dropdown สำหรับเลือกจำนวนแถวต่อหน้า */}
+                <select
+                    value={table.getState().pagination.pageSize}
+                    onChange={(e) => table.setPageSize(Number(e.target.value))}
+                    className="ml-4 p-1 border border-gray-300 bg-white text-black rounded"
+                >
+                    {[5, 10, 15, 20].map((pageSize) => (
+                        <option key={pageSize} value={pageSize}>
+                            Show {pageSize}
+                        </option>
+                    ))}
+                </select>
+            </div>
         </div>
     );
 };

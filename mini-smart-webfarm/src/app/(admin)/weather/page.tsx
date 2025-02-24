@@ -15,93 +15,59 @@ interface WeatherData {
     lastUpdated: string;
 }
 
-const BasePage = () => {
+const OPENWEATHER_API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
+const CITY_NAME = process.env.NEXT_PUBLIC_CITY_NAME;
+const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${CITY_NAME}&units=metric&appid=${OPENWEATHER_API_KEY}`;
+
+const WeatherPage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [weatherData, setWeatherData] = useState({
-        temperature: 24,
-        humidity: 65,
-        precipitation: 0.2,
-        windSpeed: 12,
-        conditions: "Partly Cloudy",
-        forecast: "Sunny",
-        lastUpdated: new Date().toLocaleTimeString(),
+    const [weatherData, setWeatherData] = useState<WeatherData>({
+        temperature: 0,
+        humidity: 0,
+        precipitation: 0,
+        windSpeed: 0,
+        conditions: "",
+        forecast: "",
+        lastUpdated: "",
     });
 
-    const [forecastData] = useState([
-        {
-            day: "Tomorrow",
-            date: "Feb 25",
-            condition: "Sunny",
-            highTemp: 26,
-            lowTemp: 18,
-            precipitation: 0,
-            humidity: 60,
-        },
-        {
-            day: "Tuesday",
-            date: "Feb 26",
-            condition: "Cloudy",
-            highTemp: 24,
-            lowTemp: 17,
-            precipitation: 30,
-            humidity: 75,
-        },
-        {
-            day: "Wednesday",
-            date: "Feb 27",
-            condition: "Rainy",
-            highTemp: 22,
-            lowTemp: 16,
-            precipitation: 80,
-            humidity: 85,
-        },
-        {
-            day: "Thursday",
-            date: "Feb 28",
-            condition: "Cloudy",
-            highTemp: 23,
-            lowTemp: 17,
-            precipitation: 20,
-            humidity: 70,
-        },
-    ]);
-
     useEffect(() => {
-        const updateWeather = () => {
-            setWeatherData((prev) => ({
-                ...prev,
-                lastUpdated: new Date().toLocaleTimeString(),
-            }));
-        };
-
-        const interval = setInterval(updateWeather, 300000);
+        fetchWeatherData().then();
+        const interval = setInterval(fetchWeatherData, 300000); // อัปเดตทุก 5 นาที
         return () => clearInterval(interval);
     }, []);
 
     const fetchWeatherData = async () => {
         try {
-            const res = await fetch("https://api.openweathermap.org/data/2.5/weather?lat=8.4333&lon=99.9667&appid=7a5e74918b6decd534510a88d573b8cd");
-            const data = await res.json();
+            const res = await fetch(WEATHER_API_URL);
+            if (!res.ok) throw new Error("Failed to fetch weather data");
 
-            console.log(data);
+            const data = await res.json();
+            console.log("Weather Data:", data);
+
+            setWeatherData({
+                temperature: Math.round(data.main.temp),
+                humidity: data.main.humidity,
+                precipitation: data.rain ? data.rain["1h"] || 0 : 0,
+                windSpeed: Math.round(data.wind.speed),
+                conditions: data.weather[0].description,
+                forecast: data.weather[0].main,
+                lastUpdated: new Date().toLocaleTimeString(),
+            });
         } catch (error) {
             console.error("Error fetching weather data", error);
         }
-    }
-
-    useEffect(() => {
-        // fetchWeatherData();
-    }, []);
-
-
+    };
 
     const getWeatherIcon = (condition: string) => {
         switch (condition.toLowerCase()) {
-            case "sunny":
+            case "clear":
                 return <Sun className="h-12 w-12 text-amber-600" />;
-            case "cloudy":
+            case "clouds":
                 return <Cloud className="h-12 w-12 text-stone-600" />;
-            case "rainy":
+            case "rain":
+            case "drizzle":
+            case "thunderstorm":
                 return <CloudRain className="h-12 w-12 text-blue-600" />;
             default:
                 return <Sun className="h-12 w-12 text-amber-600" />;
@@ -119,7 +85,7 @@ const BasePage = () => {
                         <div>
                             <h2 className="text-3xl font-bold mb-2 text-emerald-900">Farm Weather Dashboard</h2>
                             <p className="text-emerald-700">
-                                Current conditions for your farm location
+                                Current conditions in {CITY_NAME}
                             </p>
                         </div>
                         <div className="flex items-center mt-4 md:mt-0 bg-emerald-50 rounded-lg p-4">
@@ -144,7 +110,7 @@ const BasePage = () => {
                                     <div className="text-4xl font-bold text-emerald-900">{weatherData.temperature}</div>
                                     <div className="ml-1 text-xl text-emerald-600">°C</div>
                                 </div>
-                                <p className="mt-2 text-sm text-emerald-600">Optimal growing conditions</p>
+                                <p className="mt-2 text-sm text-emerald-600">Current temperature</p>
                             </CardContent>
                         </Card>
 
@@ -172,7 +138,7 @@ const BasePage = () => {
                                     <div className="text-4xl font-bold text-emerald-900">{weatherData.precipitation}</div>
                                     <div className="ml-1 text-xl text-emerald-600">mm</div>
                                 </div>
-                                <p className="mt-2 text-sm text-emerald-600">Last 24 hours</p>
+                                <p className="mt-2 text-sm text-emerald-600">Last 1 hour</p>
                             </CardContent>
                         </Card>
 
@@ -190,48 +156,10 @@ const BasePage = () => {
                             </CardContent>
                         </Card>
                     </div>
-
-                    {/* Weather Forecast Section */}
-                    <div className="mt-8">
-                        <h3 className="text-2xl font-bold mb-4 text-emerald-900">4-Day Forecast</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {forecastData.map((forecast, index) => (
-                                <Card key={index} className="border border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
-                                    <CardHeader className="pb-2">
-                                        <div className="flex justify-between items-center">
-                                            <div>
-                                                <CardTitle className="text-lg font-semibold text-emerald-800">{forecast.day}</CardTitle>
-                                                <p className="text-sm text-emerald-600">{forecast.date}</p>
-                                            </div>
-                                            {getWeatherIcon(forecast.condition)}
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-emerald-700">High/Low</span>
-                                                <span className="font-semibold text-emerald-900">
-                                          {forecast.highTemp}°/{forecast.lowTemp}°
-                                        </span>
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-emerald-700">Rain Chance</span>
-                                                <span className="font-semibold text-emerald-900">{forecast.precipitation}%</span>
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-emerald-700">Humidity</span>
-                                                <span className="font-semibold text-emerald-900">{forecast.humidity}%</span>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    </div>
                 </div>
             </main>
         </div>
     );
 };
 
-export default BasePage;
+export default WeatherPage;

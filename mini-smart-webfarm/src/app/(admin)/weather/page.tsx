@@ -5,6 +5,16 @@ import { Header } from "@/components/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Cloud, Droplets, Sun, Wind, CloudRain, Thermometer } from "lucide-react";
 
+interface WeatherData {
+    temperature: number;
+    humidity: number;
+    precipitation: number;
+    windSpeed: number;
+    conditions: string;
+    forecast: string;
+    lastUpdated: string;
+}
+
 const BasePage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [weatherData, setWeatherData] = useState({
@@ -17,7 +27,6 @@ const BasePage = () => {
         lastUpdated: new Date().toLocaleTimeString(),
     });
 
-    // Mock forecast data - replace with API data
     const [forecastData] = useState([
         {
             day: "Tomorrow",
@@ -69,7 +78,24 @@ const BasePage = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const getWeatherIcon = (condition) => {
+    const fetchWeatherData = async () => {
+        try {
+            const res = await fetch("https://api.openweathermap.org/data/2.5/weather?lat=8.4333&lon=99.9667&appid=7a5e74918b6decd534510a88d573b8cd");
+            const data = await res.json();
+
+            console.log(data);
+        } catch (error) {
+            console.error("Error fetching weather data", error);
+        }
+    }
+
+    useEffect(() => {
+        // fetchWeatherData();
+    }, []);
+
+
+
+    const getWeatherIcon = (condition: string) => {
         switch (condition.toLowerCase()) {
             case "sunny":
                 return <Sun className="h-12 w-12 text-amber-600" />;
@@ -185,8 +211,8 @@ const BasePage = () => {
                                             <div className="flex justify-between items-center">
                                                 <span className="text-emerald-700">High/Low</span>
                                                 <span className="font-semibold text-emerald-900">
-                          {forecast.highTemp}°/{forecast.lowTemp}°
-                        </span>
+                                          {forecast.highTemp}°/{forecast.lowTemp}°
+                                        </span>
                                             </div>
                                             <div className="flex justify-between items-center">
                                                 <span className="text-emerald-700">Rain Chance</span>

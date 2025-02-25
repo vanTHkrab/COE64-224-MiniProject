@@ -409,14 +409,19 @@ const ViewPlantsPage = () => {
                             <Label htmlFor="plant" className="text-right">
                                 Plant Name
                             </Label>
-                            <Input
-                                id="plant"
-                                name="plant"
-                                placeholder="e.g., Tomato"
-                                className="col-span-3"
-                                value={formData.plant || ""}
-                                onChange={handleInputChange}
-                            />
+                            <div className="col-span-3 relative">
+                                <div className="absolute left-2.5 top-2.5 text-green-600">
+                                    <Leaf className="h-4 w-4" />
+                                </div>
+                                <Input
+                                    id="plant"
+                                    name="plant"
+                                    placeholder="e.g., Tomato"
+                                    className="pl-9"
+                                    value={formData.plant || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="plant_season" className="text-right">
@@ -427,7 +432,20 @@ const ViewPlantsPage = () => {
                                     value={formData.plant_season || ""}
                                     onValueChange={(value) => handleSelectChange("plant_season", value)}
                                 >
-                                    <SelectTrigger>
+                                    <SelectTrigger className="pl-9 relative">
+                                        <div className="absolute left-2.5 top-2.5 text-green-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-sun">
+                                                <circle cx="12" cy="12" r="4" />
+                                                <path d="M12 2v2" />
+                                                <path d="M12 20v2" />
+                                                <path d="m4.93 4.93 1.41 1.41" />
+                                                <path d="m17.66 17.66 1.41 1.41" />
+                                                <path d="M2 12h2" />
+                                                <path d="M20 12h2" />
+                                                <path d="m6.34 17.66-1.41 1.41" />
+                                                <path d="m19.07 4.93-1.41 1.41" />
+                                            </svg>
+                                        </div>
                                         <SelectValue placeholder="Select season" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -449,7 +467,14 @@ const ViewPlantsPage = () => {
                                     value={formData.plantation_area || ""}
                                     onValueChange={(value) => handleSelectChange("plantation_area", value)}
                                 >
-                                    <SelectTrigger>
+                                    <SelectTrigger className="pl-9 relative">
+                                        <div className="absolute left-2.5 top-2.5 text-green-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-map">
+                                                <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+                                                <line x1="9" x2="9" y1="3" y2="18" />
+                                                <line x1="15" x2="15" y1="6" y2="21" />
+                                            </svg>
+                                        </div>
                                         <SelectValue placeholder="Select area" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -471,7 +496,14 @@ const ViewPlantsPage = () => {
                                     value={formData.growth_stage || ""}
                                     onValueChange={(value) => handleSelectChange("growth_stage", value)}
                                 >
-                                    <SelectTrigger>
+                                    <SelectTrigger className="pl-9 relative">
+                                        <div className="absolute left-2.5 top-2.5 text-green-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-sprout">
+                                                <path d="M7 20h10" />
+                                                <path d="M10 20c0-3.37 0-8.5 0-12a2 2 0 0 0-2-2H4" />
+                                                <path d="M14 20c0-3.37 0-8.5 0-12a2 2 0 0 1 2-2h4" />
+                                            </svg>
+                                        </div>
                                         <SelectValue placeholder="Select growth stage" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -488,57 +520,87 @@ const ViewPlantsPage = () => {
                             <Label htmlFor="pest_pressure" className="text-right">
                                 Pest Pressure
                             </Label>
-                            <Input
-                                id="pest_pressure"
-                                name="pest_pressure"
-                                type="number"
-                                step="0.1"
-                                min="0"
-                                max="10"
-                                placeholder="0-10"
-                                className="col-span-3"
-                                value={formData.pest_pressure === undefined ? "" : formData.pest_pressure}
-                                onChange={handleNumberChange}
-                            />
+                            <div className="col-span-3 relative">
+                                <div className="absolute left-2.5 top-2.5 text-green-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-bug">
+                                        <path d="m8 2 1.88 1.88" />
+                                        <path d="M14.12 3.88 16 2" />
+                                        <path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1" />
+                                        <path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6" />
+                                        <path d="M12 20v-9" />
+                                        <path d="M6.53 9C4.6 8.8 3 7.1 3 5" />
+                                        <path d="M6 13H2" />
+                                        <path d="M3 21c0-2.1 1.7-3.9 3.8-4" />
+                                        <path d="M17.47 9c1.93-.2 3.53-1.9 3.53-4" />
+                                        <path d="M18 13h4" />
+                                        <path d="M21 21c0-2.1-1.7-3.9-3.8-4" />
+                                    </svg>
+                                </div>
+                                <Input
+                                    id="pest_pressure"
+                                    name="pest_pressure"
+                                    type="number"
+                                    step="0.1"
+                                    min="0"
+                                    max="10"
+                                    placeholder="0-10"
+                                    className="pl-9"
+                                    value={formData.pest_pressure === undefined ? "" : formData.pest_pressure}
+                                    onChange={handleNumberChange}
+                                />
+                            </div>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="crop_density" className="text-right">
                                 Crop Density
                             </Label>
-                            <Input
-                                id="crop_density"
-                                name="crop_density"
-                                type="number"
-                                step="0.1"
-                                min="0"
-                                max="100"
-                                placeholder="0-100"
-                                className="col-span-3"
-                                value={formData.crop_density === undefined ? "" : formData.crop_density}
-                                onChange={handleNumberChange}
-                            />
+                            <div className="col-span-3 relative">
+                                <div className="absolute left-2.5 top-2.5 text-green-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-rows">
+                                        <path d="M18 3v18" />
+                                        <rect width="8" height="6" x="6" y="3" rx="2" />
+                                        <rect width="8" height="6" x="6" y="15" rx="2" />
+                                    </svg>
+                                </div>
+                                <Input
+                                    id="crop_density"
+                                    name="crop_density"
+                                    type="number"
+                                    step="0.1"
+                                    min="0"
+                                    max="100"
+                                    placeholder="0-100"
+                                    className="pl-9"
+                                    value={formData.crop_density === undefined ? "" : formData.crop_density}
+                                    onChange={handleNumberChange}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Visual separator */}
+                        <div className="border-t border-green-100 my-2"></div>
+
+                        <div className="flex justify-end gap-2">
+                            <DialogClose asChild>
+                                <Button variant="outline" className="gap-1 hover:bg-red-50 hover:text-red-600 border-red-200">
+                                    <X className="w-4 h-4" />
+                                    Cancel
+                                </Button>
+                            </DialogClose>
+                            <Button
+                                onClick={handleAddPlant}
+                                className="bg-green-600 hover:bg-green-700 gap-1"
+                                disabled={isSaving}
+                            >
+                                {isSaving ? (
+                                    <RefreshCw className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    <Check className="w-4 h-4" />
+                                )}
+                                Save Plant
+                            </Button>
                         </div>
                     </div>
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <Button variant="outline" className="gap-1">
-                                <X className="w-4 h-4" />
-                                Cancel
-                            </Button>
-                        </DialogClose>
-                        <Button
-                            onClick={handleAddPlant}
-                            className="bg-green-600 hover:bg-green-700 gap-1"
-                            disabled={isSaving}
-                        >
-                            {isSaving ? (
-                                <RefreshCw className="w-4 h-4 animate-spin" />
-                            ) : (
-                                <Save className="w-4 h-4" />
-                            )}
-                            Save Plant
-                        </Button>
-                    </DialogFooter>
                 </DialogContent>
             </Dialog>
 

@@ -1,19 +1,23 @@
-import { PrismaClient } from "@prisma/client";
+import { NextResponse, NextRequest } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 
-export default async function handler(req, res) {
+export async function GET(request: NextRequest) {
     try {
-        const { timeRange } = req.query;
+        const { searchParams } = new URL(request.url);
+        const timeRange = searchParams.get("timeRange");
 
         let days = 30; // Default range is 30 days
-        if (timeRange === "7days") days = 7;
-        else if (timeRange === "90days") days = 90;
+        if (timeRange === "7days") {
+            days = 7;
+        } else if (timeRange === "90days") {
+            days = 90;
+        }
 
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
 
-        // Fetch Soil Moisture and Pest Pressure based on Time Range
+        // Fetch Soil Moisture data based on Time Range
         const sensorData = await prisma.sensor_datas.findMany({
             where: {
                 timestamp: { gte: startDate },
@@ -24,6 +28,7 @@ export default async function handler(req, res) {
             },
         });
 
+        // Fetch Pest Pressure data based on plantation areas
         const cropData = await prisma.crop_infos.findMany({
             where: {
                 farm_data: { isNot: null },
@@ -45,12 +50,18 @@ export default async function handler(req, res) {
             pestPressure: entry.pest_pressure || 0,
         }));
 
-        res.status(200).json({
-            soilData: formattedSoilData,
-            pestData: formattedPestData,
-        });
+        return NextResponse.json(
+            {
+                soilData: formattedSoilData,
+                pestData: formattedPestData,
+            },
+            { status: 200 }
+        );
     } catch (error) {
         console.error("Error fetching analytics data:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        return NextResponse.json(
+            { error: "Internal Server Error" },
+            { status: 500 }
+        );
     }
 }

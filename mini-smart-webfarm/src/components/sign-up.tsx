@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Lock, Mail, User, Eye, EyeOff } from "lucide-react";
+import {router} from "next/client";
 
 const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -16,6 +17,35 @@ const SignUp = () => {
             password: formData.get("password"),
             confirmPassword: formData.get("confirm-password"),
         };
+
+        if (data.password !== data.confirmPassword) {
+            console.log("Passwords do not match");
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/auth/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: data.name,
+                    email: data.email,
+                    password: data.password,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to sign up");
+            }
+
+            const responseData = await response.json();
+            console.log(responseData);
+            await router.push("/");
+        } catch (error) {
+            console.error(error);
+        }
 
         console.log(data);
     };

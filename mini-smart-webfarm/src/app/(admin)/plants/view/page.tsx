@@ -37,6 +37,7 @@ interface Plant {
     plant_season: string;
     plantation_area: string;
     growth_stage: string;
+    timestamp: string;
     pest_pressure?: number;
     crop_density?: number;
 }
@@ -68,6 +69,7 @@ const ViewPlantsPage = () => {
                 throw new Error("Failed to fetch plants");
             }
             const data: Plant[] = await response.json();
+            console.log("Fetched plants:", data);
             setPlants(data);
             setLoading(false);
         } catch (err) {
@@ -129,26 +131,27 @@ const ViewPlantsPage = () => {
     const handleAddPlant = async () => {
         try {
             setIsSaving(true);
-            // In a real app, this would be an API call to create a new plant
-            // Mock implementation for demonstration
-            const newId = Math.max(...plants.map(p => p.id), 0) + 1;
-            const newPlant = {
-                id: newId,
-                plant: formData.plant || "New Plant",
-                plant_season: formData.plant_season || "Spring",
-                plantation_area: formData.plantation_area || "Field A",
-                growth_stage: formData.growth_stage || "Seedling",
-                pest_pressure: formData.pest_pressure,
-                crop_density: formData.crop_density
-            };
-
-            // Simulating API delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
+            const response = await fetch("/api/plants", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    plant: formData.plant || "New Plant",
+                    plant_season: formData.plant_season || "Spring",
+                    plantation_area: formData.plantation_area || "Field A",
+                    growth_stage: formData.growth_stage || "Seedling",
+                    pest_pressure: formData.pest_pressure,
+                    crop_density: formData.crop_density,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error("Failed to add plant");
+            }
+            const newPlant: Plant = await response.json();
             setPlants([...plants, newPlant]);
             setIsAddDialogOpen(false);
             resetForm();
-            // Show success message
             console.log("Plant added successfully:", newPlant);
             setIsSaving(false);
         } catch (err) {
@@ -159,23 +162,29 @@ const ViewPlantsPage = () => {
 
     const handleUpdatePlant = async () => {
         if (!currentPlant) return;
-
         try {
             setIsSaving(true);
-            // In a real app, this would be an API call to update the plant
-            // Mock implementation for demonstration
-            const updatedPlants = plants.map(p =>
-                p.id === currentPlant.id ? { ...p, ...formData } : p
+            const response = await fetch("/api/plants", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: currentPlant.id,
+                    ...formData,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error("Failed to update plant");
+            }
+            const updatedPlant: Plant = await response.json();
+            const updatedPlants = plants.map((p) =>
+                p.id === updatedPlant.id ? updatedPlant : p
             );
-
-            // Simulating API delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
             setPlants(updatedPlants);
             setIsEditDialogOpen(false);
             resetForm();
-            // Show success message
-            console.log("Plant updated successfully:", { ...currentPlant, ...formData });
+            console.log("Plant updated successfully:", updatedPlant);
             setIsSaving(false);
         } catch (err) {
             console.error("Error updating plant:", err);
@@ -185,21 +194,24 @@ const ViewPlantsPage = () => {
 
     const handleDeletePlant = async () => {
         if (!currentPlant) return;
-
         try {
             setIsSaving(true);
-            // In a real app, this would be an API call to delete the plant
-            // Mock implementation for demonstration
-            const filteredPlants = plants.filter(p => p.id !== currentPlant.id);
-
-            // Simulating API delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
+            const response = await fetch("/api/plants", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id: currentPlant.id }),
+            });
+            if (!response.ok) {
+                throw new Error("Failed to delete plant");
+            }
+            const deletedPlant: Plant = await response.json();
+            const filteredPlants = plants.filter((p) => p.id !== deletedPlant.id);
             setPlants(filteredPlants);
             setIsDeleteDialogOpen(false);
             resetForm();
-            // Show success message
-            console.log("Plant deleted successfully:", currentPlant);
+            console.log("Plant deleted successfully:", deletedPlant);
             setIsSaving(false);
         } catch (err) {
             console.error("Error deleting plant:", err);
@@ -286,6 +298,16 @@ const ViewPlantsPage = () => {
                 params.value !== undefined ? params.value.toFixed(2) : "N/A",
         },
         {
+            headerName: "Created At",
+            field: "timestamp",
+            sortable: true,
+            filter: true,
+            width: 180,
+            headerClass: "bg-green-100 text-green-800",
+            valueFormatter: (params) =>
+                params.value ? new Date(params.value).toLocaleString() : "N/A",
+        },
+        {
             headerName: "Actions",
             cellRenderer: ActionsCellRenderer,
             filter: false,
@@ -295,17 +317,17 @@ const ViewPlantsPage = () => {
         },
     ];
 
-    const filteredPlants = plants.filter(
+    const filteredPlants = plants?.filter(
         (plant) =>
-            plant.id.toString().includes(searchTerm) ||
-            plant.plant.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            plant.plant_season.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            plant.plantation_area.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+            plant?.id?.toString().includes(searchTerm) ||
+            plant?.plant?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            plant?.plant_season?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            plant?.plantation_area?.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || [];
 
-    const growthStages = ["Seedling", "Vegetative", "Flowering", "Fruiting", "Maturity", "Harvested"];
-    const seasons = ["Spring", "Summer", "Fall", "Winter", "Year-round"];
-    const areas = ["Field A", "Field B", "Greenhouse", "Garden Bed", "Orchard", "Nursery"];
+    const growthStages = ["Seedling", "Vegetative", "Flowering"];
+    const seasons = ["June", "September", "March"];
+    const areas = ["North", "Center", "South"];
 
     if (error) {
         return (
@@ -542,8 +564,8 @@ const ViewPlantsPage = () => {
                                     type="number"
                                     step="0.1"
                                     min="0"
-                                    max="10"
-                                    placeholder="0-10"
+                                    max="100"
+                                    placeholder="0-100"
                                     className="pl-9"
                                     value={formData.pest_pressure === undefined ? "" : formData.pest_pressure}
                                     onChange={handleNumberChange}
@@ -703,8 +725,8 @@ const ViewPlantsPage = () => {
                                 type="number"
                                 step="0.1"
                                 min="0"
-                                max="10"
-                                placeholder="0-10"
+                                max="100"
+                                placeholder="0-100"
                                 className="col-span-3"
                                 value={formData.pest_pressure === undefined ? "" : formData.pest_pressure}
                                 onChange={handleNumberChange}
@@ -720,7 +742,7 @@ const ViewPlantsPage = () => {
                                 type="number"
                                 step="0.1"
                                 min="0"
-                                max="100"
+                                max="50"
                                 placeholder="0-100"
                                 className="col-span-3"
                                 value={formData.crop_density === undefined ? "" : formData.crop_density}

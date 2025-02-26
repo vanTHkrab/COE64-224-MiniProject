@@ -16,6 +16,10 @@ class InvalidLoginError extends Error {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
+    session: {
+        strategy: "jwt",
+        maxAge: 60 * 60,
+    },
     debug: true,
     providers: [
         Google({
@@ -30,28 +34,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             },
             async authorize(credentials) {
                 try {
-                    const { email, password } = await signInSchema.parseAsync(credentials)
+                    const { email, password } = await signInSchema.parseAsync(credentials);
 
-                    console.log(email + " " + password);
+                    console.log("🔍 Authenticating:", email);
 
                     const user = await prisma.user.findUnique({
                         where: { email },
                     });
 
-                    console.log(user);
+                    console.log("👤 Found user:", user);
 
-                    if (!user) {
-                        console.log("User not found");
-                        throw new InvalidLoginError();
-                    }
-
-                    if(user.password === null) {
+                    if (!user || user.password === null) {
+                        console.log("❌ User not found or missing password");
                         throw new InvalidLoginError();
                     }
 
                     const isValid = await verifyPassword(password, user.password);
 
                     if (!isValid) {
+                        console.log("❌ Invalid password");
                         throw new InvalidLoginError();
                     }
 
@@ -67,24 +68,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     ],
     secret: process.env.AUTH_SECRET,
     callbacks: {
-        authorized({ request, auth }) {
-            const { pathname } = request.nextUrl;
-            if (pathname === "/middleware-example") return !!auth;
-            return true;
-        },
-        async jwt({ token, account }) {
-            if (account) {
-                token.accessToken = <string>account.access_token;
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = <string>user.id;
+                token.email = <string>user.email;
+                token.name = <string>user.name;
             }
             return token;
         },
         async session({ session, token }) {
-            if (token?.accessToken) session.accessToken = token.accessToken;
+            if (token) {
+                session.user.id = token.id;
+                session.user.email = token.email;
+                session.user.name = token.name;
+            }
             return session;
         },
-    },
-    experimental: {
-        enableWebAuthn: false,
     },
     pages: {
         signIn: "/signin",
@@ -97,12 +96,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 declare module "next-auth" {
     interface Session extends DefaultSession {
-        accessToken: string;
+        user: {
+            id: string;
+            email: string;
+            name?: string;
+        };
     }
 }
 
 declare module "next-auth/jwt" {
     interface JWT {
-        accessToken: string;
+        id: string;
+        email: string;
+        name?: string;
     }
 }

@@ -32,7 +32,15 @@ export default function SignIn() {
             password: formData.get("password"),
         };
 
-        console.log(data);
+        try {
+            await signIn("credentials", {
+                email: data.email as string,
+                password: data.password as string,
+                redirect: true,
+            });
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (

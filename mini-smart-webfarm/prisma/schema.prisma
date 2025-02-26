@@ -43,19 +43,18 @@ model plantation_area_types {
 }
 
 model sensor_datas {
-  id                     Int         @id @default(autoincrement())
-  timestamp              DateTime    @default(now())
-  temperature            Float?
-  humidity               Float?
-  ph                     Float?
-  rainfall               Float?
-  soil_moisture          Float?
-  sunlight_exposure      Float?
-  wind_speed             Float?
-  co2_concentration      Float?
-  frost_risk             Float?
-  water_usage_efficiency Float?
-  farm_data              farm_datas?
+  id                Int         @id @default(autoincrement())
+  timestamp         DateTime    @default(now())
+  temperature       Float?
+  humidity          Float?
+  ph                Float?
+  rainfall          Float?
+  soil_moisture     Float?
+  sunlight_exposure Float?
+  wind_speed        Float?
+  co2_concentration Float?
+  frost_risk        Float?
+  farm_data         farm_datas?
 
   @@map("sensor_datas")
 }
@@ -74,12 +73,13 @@ model soil_compositions {
 }
 
 model irrigation_fertilizations {
-  id                   Int         @id @default(autoincrement())
-  irrigation_frequency Int?
-  fertilizer_usage     Float?
-  water_source_type    String
-  timestamp            DateTime    @default(now())
-  farm_data            farm_datas?
+  id                     Int         @id @default(autoincrement())
+  irrigation_frequency   Int?
+  water_source_type      String
+  water_usage_efficiency Float?
+  fertilizer_usage       Float?
+  timestamp              DateTime    @default(now())
+  farm_data              farm_datas?
 
   @@map("irrigation_fertilizations")
 }
@@ -91,6 +91,7 @@ model crop_infos {
   plantation_area     String
   pest_pressure       Float?
   crop_density        Float?
+  timestamp           DateTime              @default(now())
   growth_stage_rel    growth_stages         @relation(fields: [growth_stage], references: [growth_stage], onDelete: Cascade)
   plantation_area_rel plantation_area_types @relation(fields: [plantation_area], references: [plantation_area], onDelete: Cascade)
   farm_data           farm_datas?

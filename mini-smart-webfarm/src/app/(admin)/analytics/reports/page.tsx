@@ -89,14 +89,16 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = () => {
 
                 // Fetch analytics data
                 const response = await fetch(
-                    `/api/analytics?timeRange=${selectedTimeRange}`
+                    `/api/analytics?timeRange=${selectedTimeRange}&area=${selectedArea}&crop=${selectedCrop}`
                 );
                 if (!response.ok) throw new Error("Failed to fetch analytics data");
                 const data = await response.json();
+
+                console.log("Fetched data:", data);
                 setAnalyticsData({
-                    growthData: data.growthData || [],
+                    growthData: data.date || [],
                     weatherData: data.weatherData || [],
-                    soilData: data.soilData || [],
+                    soilData: data.soilMoisture || [],
                     yieldData: data.yieldData || [],
                     pestData: data.pestData || [],
                     projections: data.projections || [],
@@ -116,7 +118,7 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = () => {
             }
         };
         fetchData().then();
-    }, [selectedTimeRange]);
+    }, [selectedTimeRange, selectedArea, selectedCrop]);
 
     // Generate a range of dates based on the selected time range.
     // If "custom" is selected, the dateRange state is used.

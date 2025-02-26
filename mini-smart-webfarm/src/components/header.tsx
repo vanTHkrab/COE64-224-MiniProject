@@ -1,13 +1,25 @@
 import { Button } from "@/components/ui/button";
-import { Bell, Menu, Sun, Moon, Leaf } from "lucide-react";
+import { Menu, Sun, Moon, Leaf } from "lucide-react";
 import React, { useState } from "react";
+import { useSession } from "next-auth/react";
+import { AlertButton } from "@/components/alert-button";
 
 interface HeaderProps {
     onMenuClick: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
+    const { data: session } = useSession(); // ดึงข้อมูล session
     const [isDark, setIsDark] = useState(false);
+
+    const userName = session?.user?.name || "Guest";
+    const imageUrl = session?.user?.image || "/images/default-avatar.png";
+
+    const initials = userName
+        .split(" ")
+        .map((word) => word.charAt(0))
+        .join("")
+        .toUpperCase();
 
     return (
         <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-emerald-100 shadow-sm z-50">
@@ -29,14 +41,8 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-emerald-50 relative"
-                    >
-                        <Bell className="h-5 w-5 text-slate-600" />
-                        <span className="absolute top-2 right-2 h-2 w-2 bg-emerald-500 rounded-full"></span>
-                    </Button>
+                    {/* ใช้ AlertButton เพื่อแสดงการแจ้งเตือน */}
+                    <AlertButton />
 
                     <Button
                         variant="ghost"
@@ -53,13 +59,22 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
 
                     <div className="flex items-center gap-3 ml-2">
                         <div className="hidden sm:block">
-                            <p className="text-sm font-medium text-slate-700">John Doe</p>
+                            <p className="text-sm font-medium text-slate-700">{userName}</p>
                             <p className="text-xs text-slate-500">Farm Manager</p>
                         </div>
-                        <div className="h-9 w-9 rounded-full bg-emerald-100 border-2 border-emerald-200
-                                      flex items-center justify-center text-emerald-700 font-medium text-sm">
-                            JD
-                        </div>
+                        {imageUrl ? (
+                            <img
+                                src={imageUrl}
+                                alt={userName}
+                                width={36}
+                                height={36}
+                                className="rounded-full"
+                            />
+                        ) : (
+                            <div className="h-9 w-9 rounded-full bg-emerald-100 border-2 border-emerald-200 flex items-center justify-center text-emerald-700 font-medium text-sm">
+                                {initials}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

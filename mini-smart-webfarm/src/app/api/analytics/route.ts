@@ -6,21 +6,33 @@ export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const timeRange = searchParams.get("timeRange");
+        const area = <string> searchParams.get("area");
+        const crop = <string> searchParams.get("crop");
 
-        let days = 30; // Default range is 30 days
+        // console.log("selectedArea", area);
+        // console.log("selectedCrop", crop);
+        // console.log("timeRange", timeRange);
+
+        let days = 30;
         if (timeRange === "7days") {
             days = 7;
+        } else if (timeRange === "30days") {
+            days = 30;
         } else if (timeRange === "90days") {
             days = 90;
         }
 
         const startDate = new Date();
-        startDate.setDate(startDate.getDate() - days);
 
-        // Fetch Soil Moisture data based on Time Range
         const sensorData = await prisma.sensor_datas.findMany({
             where: {
-                timestamp: { gte: startDate },
+                timestamp: {
+                    gte: startDate
+                },
+            },
+            take: days,
+            orderBy: {
+                id: "desc",
             },
             select: {
                 timestamp: true,
@@ -28,18 +40,25 @@ export async function GET(request: NextRequest) {
             },
         });
 
-        // Fetch Pest Pressure data based on plantation areas
         const cropData = await prisma.crop_infos.findMany({
             where: {
-                farm_data: { isNot: null },
+                farm_data: {
+                    isNot: null
+                },
+                timestamp: {
+                    gte: startDate
+                },
             },
+            take: days,
             select: {
                 plantation_area: true,
                 pest_pressure: true,
+                plant: true,
+                growth_stage: true,
+                timestamp: true,
             },
         });
 
-        // Format data for charts
         const formattedSoilData = sensorData.map((entry) => ({
             date: entry.timestamp.toISOString().split("T")[0],
             soilMoisture: entry.soil_moisture || 0,
@@ -48,6 +67,9 @@ export async function GET(request: NextRequest) {
         const formattedPestData = cropData.map((entry) => ({
             plantationArea: entry.plantation_area,
             pestPressure: entry.pest_pressure || 0,
+            plant: entry.plant,
+            growthStage: entry.growth_stage,
+            date: entry.timestamp.toISOString().split("T")[0],
         }));
 
         return NextResponse.json(

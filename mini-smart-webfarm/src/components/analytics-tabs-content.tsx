@@ -29,6 +29,11 @@ const AnalyticsTabsContent: React.FC<AnalyticsTabsContentProps> = ({
                                                                        dates,
                                                                        formatDate,
                                                                    }) => {
+
+    console.log("analyticsData", analyticsData);
+    // console.log("dates", dates);
+    // console.log("formatDate", formatDate);
+
     return (
         <Tabs defaultValue="growth" className="mb-6">
             <div className="flex justify-between items-center mb-4">

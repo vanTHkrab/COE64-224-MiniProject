@@ -30,7 +30,7 @@ const SmartFarmDashboard: React.FC = () => {
     useEffect(() => {
         const fetchSensorData = async () => {
             try {
-                const response = await fetch('http://localhost:3000/api/sensor');
+                const response = await fetch('/api/sensor');
                 const data: SensorData[] = await response.json();
 
                 setSensorData(data);

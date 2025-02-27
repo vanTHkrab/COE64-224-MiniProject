@@ -13,7 +13,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     const [isDark, setIsDark] = useState(false);
 
     const userName = session?.user?.name || "Guest";
-    const imageUrl = session?.user?.image || "/images/default-avatar.png";
+    const imageUrl = session?.user?.image;
 
     const initials = userName
         .split(" ")

@@ -4,6 +4,7 @@ import { BarChart3, ChevronDown, Droplet, Home, Leaf, Map, Settings, CloudSunRai
 import React, { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import Image from "next/image";
 
 interface SidebarProps {
     isOpen: boolean;
@@ -23,19 +24,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {
             title: 'Farm Areas',
             icon: <Map className="w-5 h-5" />,
-            path: '/areas/add'
+            path: '/areas'
         },
         {
             title: 'Irrigation',
             icon: <Droplet className="w-5 h-5" />,
-            path: '/irrigation/manages'
+            path: '/irrigation'
         },
         {
             title: 'Analytics',
             icon: <BarChart3 className="w-5 h-5" />,
-            submenu: [
-                { name: 'Reports', path: '/analytics/reports' },
-            ]
+            path: '/analytics'
         },
         {
             title: 'Weather Information',
@@ -49,8 +48,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         <div className="flex flex-col h-full bg-gradient-to-b from-emerald-50 to-blue-50">
             <div className="p-6 bg-emerald-700">
                 <h2 className="text-2xl font-semibold text-white flex items-center gap-2">
-                    <Leaf className="w-6 h-6" />
-                    Smart Farm
+                    <Image src="/images/Logo_2.jpg" alt={"Logo"} width={50} height={250} />
+                    HighTech
                 </h2>
             </div>
             <ScrollArea className="flex-1 px-3">
@@ -95,21 +94,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                                 </Button>
                             )}
 
-                            {item.submenu && activeMenu === item.title && (
-                                <div className="ml-4 mt-2 space-y-1 border-l-2 border-emerald-200">
-                                    {item.submenu.map((subItem) => (
-                                        <Link key={subItem.name} href={subItem.path} passHref>
-                                            <Button
-                                                variant="ghost"
-                                                className="w-full justify-start pl-9 text-sm text-slate-600
-                                                         hover:bg-emerald-50 hover:text-emerald-700"
-                                            >
-                                                {subItem.name}
-                                            </Button>
-                                        </Link>
-                                    ))}
-                                </div>
-                            )}
+                            {/*{item.submenu && activeMenu === item.title && (*/}
+                            {/*    <div className="ml-4 mt-2 space-y-1 border-l-2 border-emerald-200">*/}
+                            {/*        {item.submenu.map((subItem) => (*/}
+                            {/*            <Link key={subItem.name} href={subItem.path} passHref>*/}
+                            {/*                <Button*/}
+                            {/*                    variant="ghost"*/}
+                            {/*                    className="w-full justify-start pl-9 text-sm text-slate-600*/}
+                            {/*                             hover:bg-emerald-50 hover:text-emerald-700"*/}
+                            {/*                >*/}
+                            {/*                    {subItem.name}*/}
+                            {/*                </Button>*/}
+                            {/*            </Link>*/}
+                            {/*        ))}*/}
+                            {/*    </div>*/}
+                            {/*)}*/}
                         </div>
                     ))}
                 </div>

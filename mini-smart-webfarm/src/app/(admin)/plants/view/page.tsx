@@ -365,7 +365,8 @@ const ViewPlantsPage = () => {
                             Plant Information
                         </CardTitle>
                         <div className="flex items-center gap-4">
-                            <div className="relative w-64">
+                            {/* Search bar สำหรับหน้าจอ medium ขึ้นไป */}
+                            <div className="relative w-64 hidden md:block">
                                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-green-600" />
                                 <Input
                                     placeholder="Search plants..."
@@ -384,16 +385,26 @@ const ViewPlantsPage = () => {
                         </div>
                     </CardHeader>
                     <CardContent className="p-6">
+                        {/* Search bar สำหรับหน้าจอ mobile */}
+                        <div className="mb-4 block md:hidden">
+                            <div className="relative w-full">
+                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-green-600" />
+                                <Input
+                                    placeholder="Search plants..."
+                                    className="pl-8 bg-white border-green-400 text-green-800 placeholder-green-500 focus:ring-green-400 focus:border-green-400"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
                         {loading ? (
                             <div className="text-center py-4 text-green-600">
                                 <RefreshCw className="animate-spin h-8 w-8 mx-auto mb-2" />
                                 Loading plants...
                             </div>
                         ) : (
-                            <div
-                                className="ag-theme-alpine"
-                                style={{ height: "600px", width: "100%" }}
-                            >
+                            <div className="ag-theme-alpine" style={{ height: "600px", width: "100%" }}>
                                 <AgGridReact
                                     modules={[AllCommunityModule]}
                                     columnDefs={columns}

@@ -3,6 +3,7 @@ import { Menu, Sun, Moon, Leaf } from "lucide-react";
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { AlertButton } from "@/components/alert-button";
+import Image from "next/image";
 
 interface HeaderProps {
     onMenuClick: () => void;
@@ -35,8 +36,9 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                     </Button>
 
                     <div className="flex items-center gap-2">
-                        <Leaf className="h-6 w-6 text-emerald-600" />
-                        <h1 className="text-xl font-semibold text-slate-800">Smart Farm</h1>
+                        {/*<Leaf className="h-6 w-6 text-emerald-600" />*/}
+                        <Image src="/images/Logo_2.jpg" alt={"Logo"} width={50} height={250} />
+                        <h1 className="text-xl font-semibold text-slate-800">HighTech</h1>
                     </div>
                 </div>
 

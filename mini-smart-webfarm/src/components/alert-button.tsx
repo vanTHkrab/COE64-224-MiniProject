@@ -47,7 +47,7 @@ export const AlertButton: React.FC = () => {
             <Button
                 variant="ghost"
                 size="icon"
-                className="hover:bg-green-100 relative rounded-lg border-2 border-green-700 p-2"
+                className="hover:bg-green-100 relative rounded-lg p-2"
                 onClick={toggleAlerts}
             >
                 <Bell className="h-5 w-5 text-green-800" />

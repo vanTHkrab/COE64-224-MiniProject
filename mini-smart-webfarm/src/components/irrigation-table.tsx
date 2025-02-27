@@ -1,14 +1,45 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { BarChart, Info, Search, Plus, Edit, Trash2, Save, X } from "lucide-react";
+import {
+    BarChart,
+    Info,
+    Search,
+    Plus,
+    Edit,
+    Trash2,
+    Save,
+    X,
+    Droplets,    // สำหรับ Irrigation Frequency
+    Sprout,      // สำหรับ Fertilizer Usage
+    CloudRain,   // สำหรับ Water Source
+    Percent,     // สำหรับ Water Usage Efficiency
+    CalendarDays // สำหรับ Date & Time
+} from "lucide-react";
 import { AgGridReact } from "ag-grid-react";
-import { ColDef, CellClickedEvent } from "ag-grid-community";
+import { ColDef } from "ag-grid-community";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import { AllCommunityModule, ModuleRegistry, ClientSideRowModelModule, ColumnAutoSizeModule } from "ag-grid-community";
+import {
+    AllCommunityModule,
+    ModuleRegistry,
+    ClientSideRowModelModule,
+    ColumnAutoSizeModule,
+} from "ag-grid-community";
+import { Header } from "@/components/header";
+import { Sidebar } from "@/components/sidebar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogClose,
+} from "@/components/ui/dialog";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnAutoSizeModule]);
 
-// Updated interface to include water_usage_efficiency
 interface IrrigationData {
     id: number;
     irrigation_frequency: number;
@@ -18,8 +49,7 @@ interface IrrigationData {
     water_usage_efficiency: number;
 }
 
-// Define a type for the empty/new record with water_usage_efficiency added
-const emptyRecord: Omit<IrrigationData, 'id'> = {
+const emptyRecord: Omit<IrrigationData, "id"> = {
     irrigation_frequency: 1,
     fertilizer_usage: 10,
     water_source_type: "Well",
@@ -34,6 +64,7 @@ const IrrigationDashboard = () => {
     const [activeTab, setActiveTab] = useState("table");
     const [searchTerm, setSearchTerm] = useState("");
     const [gridApi, setGridApi] = useState<any>(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // State for modal and editing
     const [showModal, setShowModal] = useState(false);
@@ -73,9 +104,8 @@ const IrrigationDashboard = () => {
         }, 100);
     };
 
-
     // CRUD Operations
-    const handleAdd = async () => {
+    const handleAdd = () => {
         setIsEditing(false);
         setFormData({ ...emptyRecord, timestamp: new Date().toISOString() });
         setShowModal(true);
@@ -84,13 +114,7 @@ const IrrigationDashboard = () => {
     const handleEdit = (record: IrrigationData) => {
         setIsEditing(true);
         setCurrentRecord(record);
-        setFormData({
-            irrigation_frequency: record.irrigation_frequency,
-            fertilizer_usage: record.fertilizer_usage,
-            water_source_type: record.water_source_type,
-            timestamp: record.timestamp,
-            water_usage_efficiency: record.water_usage_efficiency,
-        });
+        setFormData({ ...record });
         setShowModal(true);
     };
 
@@ -107,19 +131,18 @@ const IrrigationDashboard = () => {
     const handleSave = async () => {
         try {
             if (isEditing && currentRecord) {
-                // Update existing record via API (or local state for demo)
+                // Update existing record
                 setData((prevData) =>
                     prevData.map((item) =>
                         item.id === currentRecord.id ? { ...item, ...formData } : item
                     )
                 );
             } else {
-                // Add new record via API (or local state for demo)
+                // Add new record
                 const newId = Math.max(...data.map((item) => item.id), 0) + 1;
                 const newRecord = { id: newId, ...formData };
                 setData((prevData) => [...prevData, newRecord]);
             }
-
             setShowModal(false);
             setFormData(emptyRecord);
             setCurrentRecord(null);
@@ -128,7 +151,9 @@ const IrrigationDashboard = () => {
         }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
         const { name, value, type } = e.target as HTMLInputElement;
         setFormData({
             ...formData,
@@ -136,7 +161,7 @@ const IrrigationDashboard = () => {
         });
     };
 
-    // Custom cell renderer for the irrigation frequency
+    // Custom cell renderers
     const IrrigationFrequencyRenderer = (params: any) => {
         const value = params.value;
         return (
@@ -153,11 +178,9 @@ const IrrigationDashboard = () => {
         );
     };
 
-    // Custom cell renderer for the fertilizer usage
     const FertilizerUsageRenderer = (params: any) => {
         const value = params.value;
-        const percent = Math.min((value / 40) * 100, 100); // Normalize to 0-100%
-
+        const percent = Math.min((value / 40) * 100, 100);
         return (
             <div className="flex items-center">
                 <span className="mr-2">{value} kg</span>
@@ -168,7 +191,6 @@ const IrrigationDashboard = () => {
         );
     };
 
-    // Custom cell renderer for the water source
     const WaterSourceRenderer = (params: any) => {
         const value = params.value;
         const getColor = () => {
@@ -183,7 +205,6 @@ const IrrigationDashboard = () => {
                     return "bg-gray-600";
             }
         };
-
         return (
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${getColor()}`}>
         {value}
@@ -191,48 +212,44 @@ const IrrigationDashboard = () => {
         );
     };
 
-    // Custom cell renderer for the water usage efficiency
     const WaterUsageEfficiencyRenderer = (params: any) => {
         const value = params.value;
-        return (
-            <div className="text-sm font-medium">
-                {value}%
-            </div>
-        );
+        return <div className="text-sm font-medium">{value}%</div>;
     };
 
-    // Custom cell renderer for the timestamp
     const TimestampRenderer = (params: any) => {
         const date = new Date(params.value);
         return (
-            <div className="text-sm">
+            <div className="text-sm pl-2">
                 <div>{date.toLocaleDateString()}</div>
                 <div className="text-emerald-300">{date.toLocaleTimeString()}</div>
             </div>
         );
     };
 
-    // Custom cell renderer for actions
     const ActionRenderer = (params: any) => {
         return (
             <div className="flex space-x-2">
-                <button
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 w-8 p-0 text-amber-400 hover:text-amber-300 hover:bg-amber-900/30"
                     onClick={() => handleEdit(params.data)}
-                    className="p-1 text-amber-400 hover:text-amber-300 hover:bg-amber-900/30 rounded"
                 >
                     <Edit size={16} />
-                </button>
-                <button
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 w-8 p-0 text-red-400 hover:text-red-300 hover:bg-red-900/30"
                     onClick={() => setDeleteConfirmId(params.data.id)}
-                    className="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/30 rounded"
                 >
                     <Trash2 size={16} />
-                </button>
+                </Button>
             </div>
         );
     };
 
-    // Define the columns for AG Grid (with new column added)
     const columnDefs: ColDef[] = [
         {
             field: "id",
@@ -282,7 +299,6 @@ const IrrigationDashboard = () => {
         },
     ];
 
-    // Default column definition
     const defaultColDef = {
         sortable: true,
         filter: true,
@@ -292,13 +308,13 @@ const IrrigationDashboard = () => {
         minWidth: 100,
     };
 
-    const filterData = data.filter((item) =>
-        item.id.toString().includes(searchTerm) ||
-        item?.irrigation_frequency.toString().includes(searchTerm) ||
-        item?.water_source_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item?.timestamp.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredData = data.filter(
+        (item) =>
+            item.id.toString().includes(searchTerm) ||
+            item.irrigation_frequency.toString().includes(searchTerm) ||
+            item.water_source_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.timestamp.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
 
     if (loading)
         return (
@@ -323,266 +339,235 @@ const IrrigationDashboard = () => {
         );
 
     return (
-        <div className="bg-gradient-to-br from-emerald-950 to-blue-950 text-emerald-50 p-6 rounded-lg shadow-xl">
-            <div className="mb-6 flex justify-between items-center">
-                <div>
-                    <h2 className="text-2xl font-bold text-emerald-100 mb-2">
-                        Farm Irrigation Dashboard
-                    </h2>
-                    <p className="text-emerald-200 text-sm">
-                        Monitor and analyze your irrigation data
-                    </p>
-                </div>
-                <button
-                    onClick={handleAdd}
-                    className="flex items-center bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg text-white transition-colors"
-                >
-                    <Plus size={16} className="mr-2" />
-                    Add Record
-                </button>
-            </div>
+        <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-amber-100 relative">
+            <Header onMenuClick={() => setIsSidebarOpen(true)} />
+            <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-            <div className="mb-4 flex border-b border-emerald-800">
-                <button
-                    className={`px-4 py-2 font-medium text-sm ${
-                        activeTab === "table"
-                            ? "text-emerald-300 border-b-2 border-emerald-400"
-                            : "text-emerald-500 hover:text-emerald-300"
-                    }`}
-                    onClick={() => setActiveTab("table")}
-                >
-                    Table View
-                </button>
-                <button
-                    className={`px-4 py-2 font-medium text-sm flex items-center ${
-                        activeTab === "stats"
-                            ? "text-emerald-300 border-b-2 border-emerald-400"
-                            : "text-emerald-500 hover:text-emerald-300"
-                    }`}
-                    onClick={() => setActiveTab("stats")}
-                >
-                    <BarChart size={16} className="mr-1" />
-                    Statistics
-                </button>
-            </div>
-
-            {activeTab === "table" ? (
-                <>
-                    {/* Search Box */}
-                    <div className="mb-4 relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <Search className="h-4 w-4 text-emerald-500" />
-                        </div>
-                        <input
-                            type="text"
-                            placeholder="Search across all columns..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-emerald-900/50 border border-emerald-700 rounded-lg text-emerald-100 placeholder-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
-                        {searchTerm && (
-                            <button
-                                className="absolute inset-y-0 right-0 flex items-center pr-3 text-emerald-500 hover:text-emerald-400"
-                                onClick={() => setSearchTerm("")}
+            <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 p-6 overflow-auto">
+                <Card className="shadow-lg bg-white rounded-lg border border-green-200">
+                    <CardHeader className="bg-green-600 text-white py-4 rounded-t-lg flex flex-row items-center justify-between">
+                        <CardTitle className="text-2xl font-bold">Farm Irrigation Dashboard</CardTitle>
+                        <div className="flex items-center gap-4">
+                            {/* Search bar สำหรับหน้าจอ medium ขึ้นไป */}
+                            <div className="relative w-64 hidden md:block">
+                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-green-600" />
+                                <Input
+                                    placeholder="Search records..."
+                                    className="pl-8 bg-white border-green-400 text-green-800 placeholder-green-500 focus:ring-green-400 focus:border-green-400"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                            <Button
+                                onClick={handleAdd}
+                                className="bg-green-700 hover:bg-green-800 text-white flex items-center gap-1"
                             >
-                                ×
-                            </button>
-                        )}
-                    </div>
-
-                    {/* AG Grid Component */}
-                    <div className="ag-theme-alpine-dark" style={{ height: 600, width: "100%" }}>
-                        <AgGridReact
-                            modules={[AllCommunityModule]}
-                            columnDefs={columnDefs}
-                            rowData={filterData}
-                            pagination={true}
-                            paginationPageSize={20}
-                            detailRowAutoHeight={true}
-                            defaultColDef={{
-                                flex: 1,
-                                minWidth: 100,
-                                resizable: true,
-                            }}
-                            rowClass="hover:bg-green-50"
-                            onGridReady={onGridReady}
-                        />
-                    </div>
-                </>
-            ) : (
-                <div className="bg-emerald-900/30 rounded-lg p-6 mt-2">
-                    <h3 className="text-lg font-medium text-emerald-100 mb-4">
-                        Irrigation Overview
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-gradient-to-br from-emerald-900 to-emerald-800 p-4 rounded-lg">
-                            <p className="text-emerald-300 text-sm mb-1">Average Irrigation</p>
-                            <p className="text-2xl font-bold text-white">
-                                {data.length > 0
-                                    ? (
-                                        data.reduce((sum, item) => sum + item.irrigation_frequency, 0) /
-                                        data.length
-                                    ).toFixed(1)
-                                    : "0"}
-                                x
-                                <span className="text-sm font-normal ml-1 text-emerald-200">
-                  daily
-                </span>
-                            </p>
+                                <Plus size={16} />
+                                Add Record
+                            </Button>
                         </div>
-
-                        <div className="bg-gradient-to-br from-blue-900 to-blue-800 p-4 rounded-lg">
-                            <p className="text-blue-300 text-sm mb-1">Total Fertilizer Used</p>
-                            <p className="text-2xl font-bold text-white">
-                                {data.reduce((sum, item) => sum + item.fertilizer_usage, 0)}
-                                <span className="text-sm font-normal ml-1 text-blue-200">kg</span>
-                            </p>
-                        </div>
-
-                        <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 p-4 rounded-lg">
-                            <p className="text-indigo-300 text-sm mb-1">Water Sources</p>
-                            <div className="flex justify-between items-center">
-                                {Array.from(new Set(data.map((item) => item.water_source_type))).map(
-                                    (source) => (
-                                        <div key={source} className="text-center">
-                                            <p className="text-lg font-bold text-white">
-                                                {data.filter((item) => item.water_source_type === source).length}
-                                            </p>
-                                            <p className="text-xs text-indigo-200">{source}</p>
-                                        </div>
-                                    )
-                                )}
+                    </CardHeader>
+                    <CardContent className="p-6">
+                        {/* Search bar สำหรับหน้าจอ mobile */}
+                        <div className="mb-4 block md:hidden">
+                            <div className="relative w-full">
+                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-green-600" />
+                                <Input
+                                    placeholder="Search records..."
+                                    className="pl-8 bg-white border-green-400 text-green-800 placeholder-green-500 focus:ring-green-400 focus:border-green-400"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
                             </div>
                         </div>
-                    </div>
-                </div>
-            )}
+                        {loading ? (
+                            <div className="text-center py-4 text-green-600">
+                                <div className="animate-spin h-8 w-8 mx-auto mb-2">
+                                    {/* ถ้าต้องการใช้ไอคอนหมุน */}
+                                    {/* <RefreshCw /> */}
+                                </div>
+                                Loading records...
+                            </div>
+                        ) : (
+                            <div className="ag-theme-alpine" style={{ height: 600, width: "100%" }}>
+                                <AgGridReact
+                                    modules={[AllCommunityModule]}
+                                    columnDefs={columnDefs}
+                                    rowData={filteredData}
+                                    pagination={true}
+                                    paginationPageSize={20}
+                                    detailRowAutoHeight={true}
+                                    defaultColDef={defaultColDef}
+                                    rowClass="hover:bg-green-50"
+                                    onGridReady={onGridReady}
+                                />
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </main>
 
-            {/* Add/Edit Record Modal */}
-            {showModal && (
-                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-                    <div className="bg-gradient-to-br from-emerald-950 to-blue-950 text-emerald-50 p-6 rounded-lg shadow-xl w-96 max-w-full">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-bold text-emerald-100">
-                                {isEditing ? "Edit Record" : "Add New Record"}
-                            </h3>
-                            <button onClick={() => setShowModal(false)} className="text-emerald-400 hover:text-emerald-300">
-                                <X size={20} />
-                            </button>
-                        </div>
-
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-emerald-300 text-sm mb-1">Irrigation Frequency</label>
-                                <input
+            {/* Add/Edit Record Dialog */}
+            <Dialog open={showModal} onOpenChange={setShowModal}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-green-700">
+                            {/* ถ้าเป็นการแก้ไขให้แสดงไอคอน Edit */}
+                            {isEditing ? (
+                                <>
+                                    <Edit className="w-5 h-5" />
+                                    Edit Record
+                                </>
+                            ) : (
+                                <>
+                                    <Plus className="w-5 h-5" />
+                                    Add New Record
+                                </>
+                            )}
+                        </DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        {/* Irrigation Frequency */}
+                        <div className="relative">
+                            <label className="block text-green-600 text-sm mb-1">
+                                Irrigation Frequency
+                            </label>
+                            <div className="relative">
+                                <Droplets className="absolute left-2 top-3 h-4 w-4 text-green-600" />
+                                <Input
                                     type="number"
                                     name="irrigation_frequency"
                                     value={formData.irrigation_frequency}
                                     onChange={handleInputChange}
                                     min="1"
                                     max="10"
-                                    className="w-full bg-emerald-900/50 border border-emerald-700 rounded-lg p-2 text-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                    className="pl-8"
                                 />
                             </div>
+                        </div>
 
-                            <div>
-                                <label className="block text-emerald-300 text-sm mb-1">Fertilizer Usage (kg)</label>
-                                <input
+                        {/* Fertilizer Usage */}
+                        <div className="relative">
+                            <label className="block text-green-600 text-sm mb-1">
+                                Fertilizer Usage (kg)
+                            </label>
+                            <div className="relative">
+                                <Sprout className="absolute left-2 top-3 h-4 w-4 text-green-600" />
+                                <Input
                                     type="number"
                                     name="fertilizer_usage"
                                     value={formData.fertilizer_usage}
                                     onChange={handleInputChange}
                                     min="0"
-                                    className="w-full bg-emerald-900/50 border border-emerald-700 rounded-lg p-2 text-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                    className="pl-8"
                                 />
                             </div>
+                        </div>
 
-                            <div>
-                                <label className="block text-emerald-300 text-sm mb-1">Water Source</label>
+                        {/* Water Source */}
+                        <div className="relative">
+                            <label className="block text-green-600 text-sm mb-1">Water Source</label>
+                            <div className="relative">
+                                <CloudRain className="absolute left-2 top-3 h-4 w-4 text-green-600" />
                                 <select
                                     name="water_source_type"
                                     value={formData.water_source_type}
                                     onChange={handleInputChange}
-                                    className="w-full bg-emerald-900/50 border border-emerald-700 rounded-lg p-2 text-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                    className="w-full bg-white border border-green-400 rounded-lg pl-8 pr-2 py-2 text-green-800 focus:outline-none focus:ring-2 focus:ring-green-400"
                                 >
                                     <option value="River">River</option>
                                     <option value="Groundwater">Groundwater</option>
                                     <option value="Recycled">Recycled</option>
                                 </select>
                             </div>
+                        </div>
 
-                            <div>
-                                <label className="block text-emerald-300 text-sm mb-1">Water Usage Efficiency (%)</label>
-                                <input
+                        {/* Water Usage Efficiency (%) */}
+                        <div className="relative">
+                            <label className="block text-green-600 text-sm mb-1">
+                                Water Usage Efficiency (%)
+                            </label>
+                            <div className="relative">
+                                <Percent className="absolute left-2 top-3 h-4 w-4 text-green-600" />
+                                <Input
                                     type="number"
                                     name="water_usage_efficiency"
                                     value={formData.water_usage_efficiency}
                                     onChange={handleInputChange}
                                     min="0"
                                     max="100"
-                                    className="w-full bg-emerald-900/50 border border-emerald-700 rounded-lg p-2 text-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                    className="pl-8"
                                 />
                             </div>
+                        </div>
 
-                            <div>
-                                <label className="block text-emerald-300 text-sm mb-1">Date & Time</label>
-                                <input
+                        {/* Date & Time */}
+                        <div className="relative">
+                            <label className="block text-green-600 text-sm mb-1">Date & Time</label>
+                            <div className="relative">
+                                <CalendarDays className="absolute left-2 top-3 h-4 w-4 text-green-600" />
+                                <Input
                                     type="datetime-local"
                                     name="timestamp"
                                     value={formData.timestamp.substring(0, 16)}
                                     onChange={handleInputChange}
-                                    className="w-full bg-emerald-900/50 border border-emerald-700 rounded-lg p-2 text-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                    className="pl-8"
                                 />
                             </div>
                         </div>
-
-                        <div className="mt-6 flex justify-end space-x-2">
-                            <button
-                                onClick={() => setShowModal(false)}
-                                className="px-4 py-2 border border-emerald-600 text-emerald-400 rounded-lg hover:bg-emerald-900/30"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSave}
-                                className="flex items-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
-                            >
-                                <Save size={16} className="mr-1" />
-                                Save
-                            </button>
-                        </div>
                     </div>
-                </div>
-            )}
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button
+                                variant="outline"
+                                className="gap-1 hover:bg-red-50 hover:text-red-600 border-red-200"
+                            >
+                                <X className="w-4 h-4" />
+                                Cancel
+                            </Button>
+                        </DialogClose>
+                        <Button onClick={handleSave} className="bg-green-600 hover:bg-green-700 gap-1">
+                            <Save size={16} className="mr-1" />
+                            Save
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
-            {/* Delete Confirmation Modal */}
-            {deleteConfirmId !== null && (
-                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-                    <div className="bg-gradient-to-br from-red-950 to-red-900 text-red-50 p-6 rounded-lg shadow-xl w-96 max-w-full">
-                        <h3 className="text-xl font-bold text-red-100 mb-4">Confirm Delete</h3>
-                        <p className="text-red-200 mb-6">
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={deleteConfirmId !== null} onOpenChange={() => setDeleteConfirmId(null)}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-red-700">
+                            <Trash2 className="w-5 h-5" />
+                            Delete Record
+                        </DialogTitle>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <p className="text-center">
                             Are you sure you want to delete this record? This action cannot be undone.
                         </p>
-
-                        <div className="flex justify-end space-x-2">
-                            <button
-                                onClick={() => setDeleteConfirmId(null)}
-                                className="px-4 py-2 border border-red-600 text-red-400 rounded-lg hover:bg-red-900/30"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={() => handleDelete(deleteConfirmId)}
-                                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                            >
-                                <Trash2 size={16} className="mr-1" />
-                                Delete
-                            </button>
-                        </div>
                     </div>
-                </div>
-            )}
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button
+                                variant="outline"
+                                className="gap-1 hover:bg-red-50 hover:text-red-600 border-red-200"
+                            >
+                                <X className="w-4 h-4" />
+                                Cancel
+                            </Button>
+                        </DialogClose>
+                        <Button
+                            onClick={() => handleDelete(deleteConfirmId!)}
+                            className="bg-red-600 hover:bg-red-700 gap-1"
+                        >
+                            <Trash2 size={16} className="mr-1" />
+                            Delete
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

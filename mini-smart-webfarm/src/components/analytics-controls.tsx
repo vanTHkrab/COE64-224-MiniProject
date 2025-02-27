@@ -104,7 +104,6 @@ const AnalyticsControls: React.FC<AnalyticsControlsProps> = ({
                                 <SelectItem value="7days">Last 7 Days</SelectItem>
                                 <SelectItem value="30days">Last 30 Days</SelectItem>
                                 <SelectItem value="90days">Last 90 Days</SelectItem>
-                                <SelectItem value="custom">Custom Range</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

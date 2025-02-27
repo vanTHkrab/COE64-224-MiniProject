@@ -31,7 +31,7 @@ const AnalyticsTabsContent: React.FC<AnalyticsTabsContentProps> = ({
                                                                        formatDate,
                                                                    }) => {
 
-    console.log("analyticsData", analyticsData);
+    // console.log("analyticsData", analyticsData);
     // console.log("dates", dates);
     // console.log("formatDate", formatDate);
 
@@ -43,6 +43,25 @@ const AnalyticsTabsContent: React.FC<AnalyticsTabsContentProps> = ({
     const sortedPestData = [...analyticsData.pestData].sort(
         (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
+
+    const sortedWeatherData = [...analyticsData.weatherData].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+
+    const sortedGrowthData = [...analyticsData.growthData].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+
+    const growthStageCounts = sortedGrowthData.reduce((acc, item) => {
+        acc[item.growthStage] = (acc[item.growthStage] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
+
+    const growthStageChartData = Object.keys(growthStageCounts).map((stage) => ({
+        growthStage: stage,
+        count: growthStageCounts[stage],
+    }));
+
 
     return (
         <Tabs defaultValue="growth" className="mb-6">
@@ -65,10 +84,10 @@ const AnalyticsTabsContent: React.FC<AnalyticsTabsContentProps> = ({
                         <span>Pest Management</span>
                     </TabsTrigger>
                 </TabsList>
-                <Button variant="outline" className="flex items-center gap-1">
-                    <Download className="h-4 w-4" />
-                    <span>Export</span>
-                </Button>
+                {/*<Button variant="outline" className="flex items-center gap-1">*/}
+                {/*    <Download className="h-4 w-4" />*/}
+                {/*    <span>Export</span>*/}
+                {/*</Button>*/}
             </div>
             {loading ? (
                 <Card className="shadow-sm">
@@ -79,43 +98,23 @@ const AnalyticsTabsContent: React.FC<AnalyticsTabsContentProps> = ({
             ) : (
                 <>
                     <TabsContent value="growth" className="mt-0">
-                        {/* Example: Growth Charts */}
+                        {/* Growth Charts */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <Card className="shadow-sm">
                                 <CardHeader className="pb-2">
-                                    <CardTitle className="text-lg">Plant Growth Progression</CardTitle>
-                                    <CardDescription>Height measured in centimeters over time</CardDescription>
+                                    <CardTitle className="text-lg">Growth Stage Distribution</CardTitle>
+                                    <CardDescription>Number of plants in each growth stage</CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="h-80">
                                         <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart data={analyticsData.growthData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                            <BarChart data={growthStageChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                                                 <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="date" tickFormatter={formatDate} />
-                                                <YAxis label={{ value: "Height (cm)", angle: -90, position: "insideLeft" }} />
-                                                <Tooltip formatter={(value) => [`${value} cm`, "Height"]} labelFormatter={formatDate} />
+                                                <XAxis dataKey="growthStage" />
+                                                <YAxis label={{ value: "Count", angle: -90, position: "insideLeft" }} />
+                                                <Tooltip formatter={(value) => [`${value}`, "Count"]} />
                                                 <Legend />
-                                                <Line type="monotone" dataKey="height" stroke={COLORS.primary} strokeWidth={2} activeDot={{ r: 8 }} />
-                                            </LineChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                            <Card className="shadow-sm">
-                                <CardHeader className="pb-2">
-                                    <CardTitle className="text-lg">Plant Growth Rate</CardTitle>
-                                    <CardDescription>Rate of growth in centimeters per day</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="h-80">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <BarChart data={analyticsData.growthData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                                                <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="date" tickFormatter={formatDate} />
-                                                <YAxis label={{ value: "Rate (cm/day)", angle: -90, position: "insideLeft" }} />
-                                                <Tooltip formatter={(value) => [`${value} cm/day`, "Rate"]} labelFormatter={formatDate} />
-                                                <Legend />
-                                                <Bar dataKey="growthRate" fill={COLORS.primary} />
+                                                <Bar dataKey="count" fill={COLORS.primary} />
                                             </BarChart>
                                         </ResponsiveContainer>
                                     </div>
@@ -124,9 +123,10 @@ const AnalyticsTabsContent: React.FC<AnalyticsTabsContentProps> = ({
                         </div>
                     </TabsContent>
 
+
                     <TabsContent value="environmental" className="mt-0">
                         {/* Example: Environmental Charts */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6">
                             <Card className="shadow-sm">
                                 <CardHeader className="pb-2">
                                     <CardTitle className="text-lg">Temperature and Humidity</CardTitle>
@@ -135,7 +135,7 @@ const AnalyticsTabsContent: React.FC<AnalyticsTabsContentProps> = ({
                                 <CardContent>
                                     <div className="h-80">
                                         <ResponsiveContainer width="100%" height="100%">
-                                            <AreaChart data={analyticsData.environmentalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                            <AreaChart data={sortedWeatherData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                                                 <CartesianGrid strokeDasharray="3 3" />
                                                 <XAxis dataKey="date" tickFormatter={formatDate} />
                                                 <YAxis label={{ value: "Value", angle: -90, position: "insideLeft" }} />
@@ -154,7 +154,7 @@ const AnalyticsTabsContent: React.FC<AnalyticsTabsContentProps> = ({
 
                     <TabsContent value="soil" className="mt-0">
                         {/* Example: Soil Moisture Charts */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6">
                             <Card className="shadow-sm">
                                 <CardHeader className="pb-2">
                                     <CardTitle className="text-lg">Soil Moisture Levels</CardTitle>
@@ -181,7 +181,7 @@ const AnalyticsTabsContent: React.FC<AnalyticsTabsContentProps> = ({
 
                     <TabsContent value="pests" className="mt-0">
                         {/* Example: Pest Management Charts */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6">
                             <Card className="shadow-sm">
                                 <CardHeader className="pb-2">
                                     <CardTitle className="text-lg">Pest Pressure Levels</CardTitle>

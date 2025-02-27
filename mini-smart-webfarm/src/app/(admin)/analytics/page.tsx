@@ -46,6 +46,7 @@ interface Metrics {
     totalRainfall: number;
     projectedYield: number;
     alertCount: number;
+    avgHumidity: number;
 }
 
 interface CropApiData {
@@ -65,36 +66,7 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = () => {
     const [cropTypes, setCropTypes] = useState<CropType[]>([]);
     const [plantationAreas, setPlantationAreas] = useState<PlantationArea[]>([]);
     const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
-        growthData: [
-            {
-                time: "2021-05-01",
-                height: 0.5,
-            },
-            {
-                time: "2021-05-02",
-                height: 0.6,
-            },
-            {
-                time: "2021-05-03",
-                height: 0.7,
-            },
-            {
-                time: "2021-05-04",
-                height: 0.8,
-            },
-            {
-                time: "2021-05-05",
-                height: 0.9,
-            },
-            {
-                time: "2021-05-06",
-                height: 1.0,
-            },
-            {
-                time: "2021-05-07",
-                height: 1.1,
-            },
-        ],
+        growthData: [],
         weatherData: [],
         soilData: [],
         yieldData: [],
@@ -125,13 +97,15 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = () => {
 
                 // console.log("Fetched data:", data);
                 setAnalyticsData({
-                    growthData: data.growthData || [],
-                    weatherData: data.weatherData || [],
+                    growthData: data.cropData || [],
+                    weatherData: data.soilData || [],
                     soilData: data.soilData || [],
                     yieldData: data.yieldData || [],
                     pestData: data.pestData || [],
                     projections: data.projections || [],
                 });
+
+                console.log("Fetched data:", data);
 
                 const cropResponse = await fetch("/api/crop-types");
                 const cropData: CropApiData[] = await cropResponse.json();
@@ -188,6 +162,7 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = () => {
             totalRainfall: 0,
             projectedYield: 0,
             alertCount: 0,
+            avgHumidity: 0,
         };
 
         if (analyticsData.soilData.length > 0) {
@@ -244,6 +219,14 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = () => {
             metrics.alertCount++;
         if (metrics.avgPestPressure > 20) metrics.alertCount++;
         if (metrics.avgGrowthRate < 0.3) metrics.alertCount++;
+
+        if (analyticsData.weatherData.length > 0) {
+            metrics.avgHumidity =
+                analyticsData.weatherData.reduce(
+                    (sum: number, entry: any) => sum + entry.humidity,
+                    0
+                ) / analyticsData.weatherData.length;
+        }
 
         return metrics;
     };

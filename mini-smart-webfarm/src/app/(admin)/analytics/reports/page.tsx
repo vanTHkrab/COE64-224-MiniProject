@@ -65,7 +65,36 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = () => {
     const [cropTypes, setCropTypes] = useState<CropType[]>([]);
     const [plantationAreas, setPlantationAreas] = useState<PlantationArea[]>([]);
     const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
-        growthData: [],
+        growthData: [
+            {
+                time: "2021-05-01",
+                height: 0.5,
+            },
+            {
+                time: "2021-05-02",
+                height: 0.6,
+            },
+            {
+                time: "2021-05-03",
+                height: 0.7,
+            },
+            {
+                time: "2021-05-04",
+                height: 0.8,
+            },
+            {
+                time: "2021-05-05",
+                height: 0.9,
+            },
+            {
+                time: "2021-05-06",
+                height: 1.0,
+            },
+            {
+                time: "2021-05-07",
+                height: 1.1,
+            },
+        ],
         weatherData: [],
         soilData: [],
         yieldData: [],
@@ -94,11 +123,11 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = () => {
                 if (!response.ok) throw new Error("Failed to fetch analytics data");
                 const data = await response.json();
 
-                console.log("Fetched data:", data);
+                // console.log("Fetched data:", data);
                 setAnalyticsData({
-                    growthData: data.date || [],
+                    growthData: data.growthData || [],
                     weatherData: data.weatherData || [],
-                    soilData: data.soilMoisture || [],
+                    soilData: data.soilData || [],
                     yieldData: data.yieldData || [],
                     pestData: data.pestData || [],
                     projections: data.projections || [],

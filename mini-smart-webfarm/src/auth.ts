@@ -86,11 +86,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
     },
     pages: {
-        signIn: "/signin",
-        signOut: "/signout",
-        error: "/error",
-        verifyRequest: "/verify-request",
-        newUser: "/new-user",
+        signIn: "/",
+        signOut: "/",
+        error: "/",
+        newUser: "/",
     },
 });
 

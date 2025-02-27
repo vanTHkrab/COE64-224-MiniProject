@@ -36,7 +36,7 @@ export default function SignIn() {
             await signIn("credentials", {
                 email: data.email as string,
                 password: data.password as string,
-                redirect: true,
+                redirect: false,
             });
         } catch (error) {
             console.error(error);

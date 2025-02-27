@@ -1,13 +1,13 @@
-import { NextResponse, NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
+import {NextResponse, NextRequest} from "next/server";
+import {prisma} from "@/lib/prisma";
 
 
 export async function GET(request: NextRequest) {
     try {
-        const { searchParams } = new URL(request.url);
+        const {searchParams} = new URL(request.url);
         const timeRange = searchParams.get("timeRange");
-        const area = <string> searchParams.get("area");
-        const crop = <string> searchParams.get("crop");
+        const area = <string>searchParams.get("area");
+        const crop = <string>searchParams.get("crop");
 
         // console.log("selectedArea", area);
         // console.log("selectedCrop", crop);
@@ -26,9 +26,12 @@ export async function GET(request: NextRequest) {
 
         const sensorData = await prisma.sensor_datas.findMany({
             where: {
-                // timestamp: {
-                //     gte: startDate
-                // },
+                farm_data: {
+                    crop_info: {
+                        plant: crop,
+                        plantation_area: area,
+                    },
+                },
             },
             take: days,
             orderBy: {
@@ -40,8 +43,23 @@ export async function GET(request: NextRequest) {
                 temperature: true,
                 humidity: true,
                 soil_moisture: true,
+                farm_data: {
+                    select: {
+                        crop_info: {
+                            select: {
+                                plant: true,
+                                growth_stage: true,
+                                pest_pressure: true,
+                                plantation_area: true,
+                                crop_density: true,
+                            },
+                        },
+                    },
+                },
             },
         });
+
+
 
         const cropData = await prisma.crop_infos.findMany({
             where: {
@@ -62,6 +80,7 @@ export async function GET(request: NextRequest) {
                 growth_stage: true,
                 timestamp: true,
             },
+
             orderBy: {
                 id: "desc",
             }
@@ -96,13 +115,13 @@ export async function GET(request: NextRequest) {
                 soilData: formattedSoilData,
                 pestData: formattedPestData,
             },
-            { status: 200 }
+            {status: 200}
         );
     } catch (error) {
         console.error("Error fetching analytics data:", error);
         return NextResponse.json(
-            { error: "Internal Server Error" },
-            { status: 500 }
+            {error: "Internal Server Error"},
+            {status: 500}
         );
     }
 }

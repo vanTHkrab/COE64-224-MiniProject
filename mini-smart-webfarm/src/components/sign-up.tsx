@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { Lock, Mail, User, Eye, EyeOff } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import {router} from "next/client";
 
 const SignUp = () => {
@@ -53,7 +55,10 @@ const SignUp = () => {
     return (
         <div className="w-full">
             <div className="w-full max-w-md p-6 ">
-                <h1 className="text-2xl font-bold text-gray-800 text-center">Sign Up</h1>
+                <h1 className="text-2xl font-bold text-gray-800 text-center">
+                    <FontAwesomeIcon icon={faUserPlus} className="mr-2"/>
+                    Sign Up
+                </h1>
                 <p className="text-gray-500 text-center">Create an account to get started.</p>
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">

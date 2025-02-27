@@ -1,9 +1,10 @@
 "use client";
-import {Eye, EyeOff, Lock, Mail, User} from "lucide-react";
+import {Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import React from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 interface SocialButtonProps {
     icon: React.ReactNode;
@@ -45,16 +46,20 @@ export default function SignIn() {
 
     return (
         <div className="w-full">
-            <h1 className="text-2xl font-bold text-center">Sign In</h1>
+            <h1 className="text-2xl font-bold text-center">
+                <FontAwesomeIcon icon={faRightToBracket} className="mr-2"/>
+                Sign In
+            </h1>
+
             <p className="text-gray-500 text-center">Sign in to your account to continue</p>
             <div className="flex items-center justify-center gap-2 my-4">
                 <form
                     action={handleSignInGoogle}
                     className="w-10 h-10 md:w-8 md:h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-green-500 hover:text-green-500 transition-colors duration-300"
                 >
-                    <SocialButton icon={"G"} ariaLabel="Sign in with Google" />
+                    <SocialButton icon={"G"} ariaLabel="Sign in with Google"/>
                 </form>
-                <SocialButton icon={"F"} ariaLabel="Sign in with Facebook" />
+                <SocialButton icon={"F"} ariaLabel="Sign in with Facebook"/>
             </div>
             <div className="text-center mt-4">
                 <span className="text-gray-500">Or sign in with email</span>
@@ -64,7 +69,7 @@ export default function SignIn() {
                     <label htmlFor="email" className="block text-gray-600">Email Address</label>
                     <div className="relative transform transition-all duration-300 hover:translate-y-[-2px]">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-20">
-                            <Mail />
+                            <Mail/>
                         </div>
                         <input
                             type="email"
@@ -80,7 +85,7 @@ export default function SignIn() {
                     <label htmlFor="password" className="block text-gray-600">Password</label>
                     <div className="relative transform transition-all duration-300 hover:translate-y-[-2px]">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-20">
-                            <Lock />
+                            <Lock/>
                         </div>
                         <input
                             type={showPassword ? "text" : "password"}
@@ -107,13 +112,14 @@ export default function SignIn() {
 
                     <div className="mt-4">
                         <label htmlFor="remember" className="flex items-center">
-                            <input type="checkbox" name="remember" id="remember" className="mr-2" />
+                            <input type="checkbox" name="remember" id="remember" className="mr-2"/>
                             <span>Remember me</span>
                         </label>
                     </div>
                 </div>
 
-                <button type="submit" className="mt-4 w-full bg-green-500 text-white px-4 py-2 rounded-md">Sign In</button>
+                <button type="submit" className="mt-4 w-full bg-green-500 text-white px-4 py-2 rounded-md">Sign In
+                </button>
             </form>
         </div>
     );

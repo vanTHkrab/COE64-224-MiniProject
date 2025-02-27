@@ -2,6 +2,7 @@
 import React from "react";
 import SignIn from "@/components/sign-in";
 import SignUp from "@/components/sign-up";
+import Image from "next/image";
 
 export default function AuthComponent() {
     const [isLogin, setIsLogin] = React.useState(true);
@@ -12,7 +13,8 @@ export default function AuthComponent() {
                 {isLogin ? <SignIn /> : <SignUp />}
                 <div className="text-center pb-6">
                       <span className="text-base text-gray-600">
-                        {isLogin ? "Don't have an account? " : "Already have an account? "}
+
+                          {isLogin ? "Don't have an account? " : "Already have an account? "}
                       </span>
                     <button
                         onClick={() => setIsLogin(!isLogin)}
@@ -46,8 +48,9 @@ export default function AuthComponent() {
                             borderRadius: isLogin ? "3rem 0 0 3rem" : "0 3rem 3rem 0",
                         }}
                     >
-                        <h3 className="text-2xl font-bold mb-4 text-center">
-                            {isLogin ? "Hello, Friend!" : "Welcome Back!"}
+                        <h3 className="text-2xl font-bold text-center translate-y-[-20%]">
+                            <Image src="/images/Logo.png" alt={"Logo"} width={250} height={250} />
+                            {isLogin ? "Wellcome To HighTech" : "Entry To HighTech"}
                         </h3>
                         <p className="text-center mb-8 text-gray-100">
                             {isLogin

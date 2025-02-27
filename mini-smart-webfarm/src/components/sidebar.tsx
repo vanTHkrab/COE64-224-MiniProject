@@ -19,7 +19,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {
             title: 'Plant Management',
             icon: <Leaf className="w-5 h-5" />,
-            path: '/plants/view'
+            path: '/plants'
         },
         {
             title: 'Farm Areas',
@@ -48,7 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         <div className="flex flex-col h-full bg-gradient-to-b from-emerald-50 to-blue-50">
             <div className="p-6 bg-emerald-700">
                 <h2 className="text-2xl font-semibold text-white flex items-center gap-2">
-                    <Image src="/images/Logo_2.jpg" alt={"Logo"} width={50} height={250} />
+                    <Image src="/images/Logo_2.jpg" alt={"Logo"} width={50} height={50} />
                     HighTech
                 </h2>
             </div>

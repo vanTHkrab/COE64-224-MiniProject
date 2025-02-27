@@ -37,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
 
                     <div className="flex items-center gap-2">
                         {/*<Leaf className="h-6 w-6 text-emerald-600" />*/}
-                        <Image src="/images/Logo_2.jpg" alt={"Logo"} width={50} height={250} />
+                        <Image src="/images/Logo_2.jpg" alt={"Logo"} width={50} height={50} />
                         <h1 className="text-xl font-semibold text-slate-800">HighTech</h1>
                     </div>
                 </div>

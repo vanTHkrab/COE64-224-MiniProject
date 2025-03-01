@@ -207,8 +207,8 @@ const IrrigationDashboard = () => {
         };
         return (
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${getColor()}`}>
-        {value}
-      </span>
+                {value}
+            </span>
         );
     };
 
@@ -318,13 +318,13 @@ const IrrigationDashboard = () => {
 
     if (loading)
         return (
-            <div className="flex items-center justify-center h-64 bg-gradient-to-br from-emerald-900 to-blue-900 p-6 rounded-lg shadow-xl">
+            <div className="flex items-center justify-center h-64 bg-gradient-to-br from-green-600 to-green-700 p-6 rounded-lg shadow-xl">
                 <div className="animate-pulse flex space-x-2">
-                    <div className="h-3 w-3 bg-emerald-300 rounded-full"></div>
-                    <div className="h-3 w-3 bg-emerald-300 rounded-full"></div>
-                    <div className="h-3 w-3 bg-emerald-300 rounded-full"></div>
+                    <div className="h-3 w-3 bg-green-300 rounded-full"></div>
+                    <div className="h-3 w-3 bg-green-300 rounded-full"></div>
+                    <div className="h-3 w-3 bg-green-300 rounded-full"></div>
                 </div>
-                <p className="text-emerald-300 ml-3">Loading irrigation data...</p>
+                <p className="text-green-100 ml-3">Loading irrigation data...</p>
             </div>
         );
 
@@ -339,7 +339,7 @@ const IrrigationDashboard = () => {
         );
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-amber-100 relative">
+        <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-amber-100">
             <Header onMenuClick={() => setIsSidebarOpen(true)} />
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
@@ -412,7 +412,6 @@ const IrrigationDashboard = () => {
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-green-700">
-                            {/* ถ้าเป็นการแก้ไขให้แสดงไอคอน Edit */}
                             {isEditing ? (
                                 <>
                                     <Edit className="w-5 h-5" />

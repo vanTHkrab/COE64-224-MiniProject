@@ -49,10 +49,10 @@ export default function AuthComponent() {
                         }}
                     >
                         <h3 className="text-2xl font-bold text-center translate-y-[-20%]">
-                            <Image src="/images/Logo.png" alt={"Logo"} width={250} height={250} />
+                            <Image src="/images/Logo_3.png" alt={"Logo"} width={250} height={250} />
                             {isLogin ? "Wellcome To HighTech" : "Entry To HighTech"}
                         </h3>
-                        <p className="text-center mb-8 text-gray-100">
+                        <p className="text-center text-gray-100">
                             {isLogin
                                 ? "Register with your personal details to use all site features"
                                 : "Enter your personal details to use all site features"}

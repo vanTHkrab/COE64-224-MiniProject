@@ -11,7 +11,7 @@ const Footer = () => {
             <div className="max-w-6xl mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Company Info */}
-                    <Image src="/images/Logo_2.jpg" alt={"Logo"} width={190} height={250} />
+                    <Image src="/images/Logo_3.png" alt={"Logo"} width={190} height={250} />
                     <div>
                         <h3 className="text-white text-lg font-bold mb-4">HighTech</h3>
                         <p className="mb-4">We're dedicated to providing the best services and products to our customers.</p>

@@ -9,7 +9,7 @@ export default function AuthComponent() {
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl shadow-xl w-full max-w-md relative z-10 md:hidden">
+            <div className="bg-white rounded-3xl shadow-xl w-full max-w-md relative z-10 p-4 md:hidden">
                 {isLogin ? <SignIn /> : <SignUp />}
                 <div className="text-center pb-6">
                       <span className="text-base text-gray-600">
@@ -48,11 +48,11 @@ export default function AuthComponent() {
                             borderRadius: isLogin ? "3rem 0 0 3rem" : "0 3rem 3rem 0",
                         }}
                     >
-                        <h3 className="text-2xl font-bold text-center translate-y-[-20%]">
-                            <Image src="/images/Logo_3.png" alt={"Logo"} width={250} height={250} />
+                        <Image src="/images/Logo_3.png" alt={"Logo"} width={200} height={200} className={"mb-12"} />
+                        <h3 className="text-2xl font-bold text-center translate-y-[-20%] mb-4">
                             {isLogin ? "Wellcome To HighTech" : "Entry To HighTech"}
                         </h3>
-                        <p className="text-center text-gray-100">
+                        <p className="text-center text-gray-100 mb-4">
                             {isLogin
                                 ? "Register with your personal details to use all site features"
                                 : "Enter your personal details to use all site features"}

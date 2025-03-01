@@ -5,6 +5,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { FaGoogle } from "react-icons/fa";
 
 interface SocialButtonProps {
     icon: React.ReactNode;
@@ -57,9 +58,8 @@ export default function SignIn() {
                     action={handleSignInGoogle}
                     className="w-10 h-10 md:w-8 md:h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-green-500 hover:text-green-500 transition-colors duration-300"
                 >
-                    <SocialButton icon={"G"} ariaLabel="Sign in with Google"/>
+                    <FaGoogle />
                 </form>
-                <SocialButton icon={"F"} ariaLabel="Sign in with Facebook"/>
             </div>
             <div className="text-center mt-4">
                 <span className="text-gray-500">Or sign in with email</span>

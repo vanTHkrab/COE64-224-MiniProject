@@ -34,7 +34,7 @@ export default function AdminLayout({
     return (
         <html lang="th">
         <body
-            className={`${madimiOne.variable} antialiased`}
+            className={`${madimiOne.className} antialiased`}
         >
         <SessionProvider>
             {children}

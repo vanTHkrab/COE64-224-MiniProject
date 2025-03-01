@@ -34,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body
-        className={`${dangrek.variable} ${madimiOne.variable} antialiased`}
+        className={`${madimiOne.className} antialiased`}
       >
         <SessionProvider>
         {children}

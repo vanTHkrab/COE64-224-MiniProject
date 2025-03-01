@@ -12,7 +12,7 @@ const IrrigationManagePage = () => {
             <Header onMenuClick={() => setIsSidebarOpen(true)} />
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-            <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 p-6 overflow-auto">
+            <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 overflow-auto  from-green-100 via-blue-50to-amber-100">
                 <MyTable />
             </main>
         </div>

@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/sidebar";
 import { ResponsiveChart } from "@/components/responside-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell, ThermometerSun, Droplet, Wind, Thermometer } from 'lucide-react';
+import {FooterDashboard} from "@/components/footer";
 
 interface SensorData {
     id: number;
@@ -58,7 +59,7 @@ const SmartFarmDashboard: React.FC = () => {
             <Header onMenuClick={() => setSidebarOpen(true)} />
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-            <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 p-6 overflow-auto">
+            <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 overflow-auto bg-gradient-to-br from-green-100 via-blue-50 to-amber-100">
                 <div className="max-w-7xl mx-auto p-3 sm:p-4 md:p-6">
                     <Card className="shadow-lg bg-white rounded-lg border border-green-200 mb-6">
                         <CardHeader className="bg-green-600 text-white py-4 rounded-t-lg">
@@ -79,14 +80,14 @@ const SmartFarmDashboard: React.FC = () => {
 
                         <CardContent className="p-6">
                             {/* Alert Section */}
-                            {sensorData.length > 0 && sensorData[0].soil_moisture < 30 && (
-                                <div className="flex items-center p-3 sm:p-4 bg-yellow-50 border border-yellow-200 rounded-lg mb-6">
-                                    <Bell className="w-5 h-5 text-yellow-500 mr-2 flex-shrink-0" />
-                                    <span className="text-sm text-yellow-700">
-                                        Low soil moisture detected in Zone A - Consider adjusting irrigation schedule
-                                    </span>
-                                </div>
-                            )}
+                            {/*{sensorData.length > 0 && sensorData[0].soil_moisture < 30 && (*/}
+                            {/*    <div className="flex items-center p-3 sm:p-4 bg-yellow-50 border border-yellow-200 rounded-lg mb-6">*/}
+                            {/*        <Bell className="w-5 h-5 text-yellow-500 mr-2 flex-shrink-0" />*/}
+                            {/*        <span className="text-sm text-yellow-700">*/}
+                            {/*            Low soil moisture detected in Zone A - Consider adjusting irrigation schedule*/}
+                            {/*        </span>*/}
+                            {/*    </div>*/}
+                            {/*)}*/}
 
                             {/* Sensor Cards */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -159,6 +160,7 @@ const SmartFarmDashboard: React.FC = () => {
                         </CardContent>
                     </Card>
                 </div>
+                <FooterDashboard />
             </main>
         </div>
     );

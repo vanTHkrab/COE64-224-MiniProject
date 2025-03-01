@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import AuthComponent from "@/components/auth";
 import Link from "next/link";
-import Footer from "@/components/footer";
+import { Footer } from "@/components/footer";
 
 const WelcomePage = () => {
     const { data: session } = useSession();

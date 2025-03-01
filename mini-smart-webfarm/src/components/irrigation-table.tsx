@@ -339,7 +339,7 @@ const IrrigationDashboard = () => {
         );
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-amber-100">
+        <div className="min-h-screen bg-gradient-to-br">
             <Header onMenuClick={() => setIsSidebarOpen(true)} />
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 

@@ -58,7 +58,9 @@ export default function SignIn() {
                     action={handleSignInGoogle}
                     className="w-10 h-10 md:w-8 md:h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-green-500 hover:text-green-500 transition-colors duration-300"
                 >
-                    <FaGoogle />
+                    <button type="submit" className="text-xl">
+                        <FaGoogle size={20}/>
+                    </button>
                 </form>
             </div>
             <div className="text-center mt-4">

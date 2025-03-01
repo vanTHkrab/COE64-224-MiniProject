@@ -8,7 +8,7 @@ datasource db {
 }
 
 model farm_datas {
-  id                          Int                       @id @default(autoincrement())
+  id                          Int                       @id @unique @default(autoincrement())
   sensor_datasId              Int                       @unique
   soil_compositionsId         Int                       @unique
   irrigation_fertilizationsId Int                       @unique
@@ -43,7 +43,7 @@ model plantation_area_types {
 }
 
 model sensor_datas {
-  id                Int         @id @default(autoincrement())
+  id                Int         @id @unique @default(autoincrement())
   timestamp         DateTime    @default(now())
   temperature       Float?
   humidity          Float?
@@ -60,7 +60,7 @@ model sensor_datas {
 }
 
 model soil_compositions {
-  id             Int                   @id @default(autoincrement())
+  id             Int                   @id @unique @default(autoincrement())
   nitrogen       Int
   phosphorus     Int
   potassium      Int
@@ -73,7 +73,7 @@ model soil_compositions {
 }
 
 model irrigation_fertilizations {
-  id                     Int         @id @default(autoincrement())
+  id                     Int         @id @unique @default(autoincrement())
   irrigation_frequency   Int?
   water_source_type      String
   water_usage_efficiency Float?
@@ -85,12 +85,14 @@ model irrigation_fertilizations {
 }
 
 model crop_infos {
-  id                  Int                   @id @default(autoincrement())
+  id                  Int                   @id @unique @default(autoincrement())
   plant               String
   growth_stage        String
   plantation_area     String
   pest_pressure       Float?
   crop_density        Float?
+  latitude            Float?
+  longitude           Float?
   timestamp           DateTime              @default(now())
   growth_stage_rel    growth_stages         @relation(fields: [growth_stage], references: [growth_stage], onDelete: Cascade)
   plantation_area_rel plantation_area_types @relation(fields: [plantation_area], references: [plantation_area], onDelete: Cascade)
@@ -100,7 +102,7 @@ model crop_infos {
 }
 
 model geo_environmentals {
-  id                   Int         @id @default(autoincrement())
+  id                   Int         @id @unique @default(autoincrement())
   urban_area_proximity Float?
   farm_data            farm_datas?
 

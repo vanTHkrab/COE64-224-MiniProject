@@ -3,6 +3,7 @@ import React, { useState, useMemo } from "react";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import dynamic from "next/dynamic";
+import {FooterDashboard} from "@/components/footer";
 
 const PlantationAreaPage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -29,6 +30,8 @@ const PlantationAreaPage = () => {
                         <MapDisplay posix={[13.736717, 100.523186]} />
                     </div>
                 </div>
+                <FooterDashboard />
+
             </main>
         </div>
     );

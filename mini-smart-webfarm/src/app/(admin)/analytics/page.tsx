@@ -1,13 +1,15 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { Header } from "@/components/header";
-import { Sidebar } from "@/components/sidebar";
+import React, {useState, useEffect} from "react";
+import {Header} from "@/components/header";
+import {Sidebar} from "@/components/sidebar";
 import AnalyticsControls from "@/components/analytics-controls";
 import MetricsSummary from "@/components/metrics-summary";
 import AnalyticsTabsContent from "@/components/analytics-tabs-content";
+import {FooterDashboard} from "@/components/footer";
 
 // Page component props (if needed)
-interface AnalyticsPageProps {}
+interface AnalyticsPageProps {
+}
 
 // Interface for the date range state
 interface DateRange {
@@ -111,7 +113,7 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = () => {
                 const cropData: CropApiData[] = await cropResponse.json();
                 const uniqueCrops: CropType[] = Array.from(
                     new Set(cropData.map((item) => item.plant))
-                ).map((crop, index) => ({ id: index, name: crop }));
+                ).map((crop, index) => ({id: index, name: crop}));
                 setCropTypes(uniqueCrops);
 
                 setLoading(false);
@@ -236,70 +238,75 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = () => {
     // Format dates to a more readable format
     const formatDate = (dateString: string): string => {
         const date = new Date(dateString);
-        return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        return date.toLocaleDateString("en-US", {month: "short", day: "numeric"});
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-amber-50">
-            <Header onMenuClick={() => setSidebarOpen(true)} />
-            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-            <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 p-6 overflow-auto">
-                <AnalyticsControls
-                    plantationAreas={plantationAreas}
-                    cropTypes={cropTypes}
-                    selectedArea={selectedArea}
-                    setSelectedArea={setSelectedArea}
-                    selectedCrop={selectedCrop}
-                    setSelectedCrop={setSelectedCrop}
-                    selectedTimeRange={selectedTimeRange}
-                    setSelectedTimeRange={setSelectedTimeRange}
-                />
-                {/* If "custom" is selected, show date inputs */}
-                {selectedTimeRange === "custom" && (
-                    <div className="flex items-center gap-4 mb-4">
-                        <div className="flex flex-col">
-                            <label htmlFor="from-date" className="text-sm font-medium">
-                                From
-                            </label>
-                            <input
-                                id="from-date"
-                                type="date"
-                                value={dateRange.from.toISOString().split("T")[0]}
-                                onChange={(e) =>
-                                    setDateRange((prev) => ({
-                                        ...prev,
-                                        from: new Date(e.target.value),
-                                    }))
-                                }
-                                className="border p-1 rounded"
-                            />
+            <Header onMenuClick={() => setSidebarOpen(true)}/>
+            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}/>
+            <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 overflow-auto">
+                <div className="m-6">
+                    <AnalyticsControls
+                        plantationAreas={plantationAreas}
+                        cropTypes={cropTypes}
+                        selectedArea={selectedArea}
+                        setSelectedArea={setSelectedArea}
+                        selectedCrop={selectedCrop}
+                        setSelectedCrop={setSelectedCrop}
+                        selectedTimeRange={selectedTimeRange}
+                        setSelectedTimeRange={setSelectedTimeRange}
+                    />
+                    {/* If "custom" is selected, show date inputs */}
+                    {selectedTimeRange === "custom" && (
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="flex flex-col">
+                                <label htmlFor="from-date" className="text-sm font-medium">
+                                    From
+                                </label>
+                                <input
+                                    id="from-date"
+                                    type="date"
+                                    value={dateRange.from.toISOString().split("T")[0]}
+                                    onChange={(e) =>
+                                        setDateRange((prev) => ({
+                                            ...prev,
+                                            from: new Date(e.target.value),
+                                        }))
+                                    }
+                                    className="border p-1 rounded"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label htmlFor="to-date" className="text-sm font-medium">
+                                    To
+                                </label>
+                                <input
+                                    id="to-date"
+                                    type="date"
+                                    value={dateRange.to.toISOString().split("T")[0]}
+                                    onChange={(e) =>
+                                        setDateRange((prev) => ({
+                                            ...prev,
+                                            to: new Date(e.target.value),
+                                        }))
+                                    }
+                                    className="border p-1 rounded"
+                                />
+                            </div>
                         </div>
-                        <div className="flex flex-col">
-                            <label htmlFor="to-date" className="text-sm font-medium">
-                                To
-                            </label>
-                            <input
-                                id="to-date"
-                                type="date"
-                                value={dateRange.to.toISOString().split("T")[0]}
-                                onChange={(e) =>
-                                    setDateRange((prev) => ({
-                                        ...prev,
-                                        to: new Date(e.target.value),
-                                    }))
-                                }
-                                className="border p-1 rounded"
-                            />
-                        </div>
-                    </div>
-                )}
-                <MetricsSummary metrics={metrics} />
-                <AnalyticsTabsContent
-                    analyticsData={analyticsData}
-                    loading={loading}
-                    dates={dates}
-                    formatDate={formatDate}
-                />
+                    )}
+                    <MetricsSummary metrics={metrics}/>
+                    <AnalyticsTabsContent
+                        analyticsData={analyticsData}
+                        loading={loading}
+                        dates={dates}
+                        formatDate={formatDate}
+                    />
+                </div>
+
+                <FooterDashboard/>
+
             </main>
         </div>
     );

@@ -11,8 +11,8 @@ const Footer = () => {
             <div className="max-w-6xl mx-auto px-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-center md:text-left">
                     {/* Company Logo */}
-                    <div className="flex justify-center md:justify-start">
-                        <Image src="/images/Logo_3.png" alt="Logo" width={140} height={180}/>
+                    <div className="justify-center md:justify-start">
+                        <Image src="/images/Logo_3.png" alt="Logo" width={140} height={140}/>
                     </div>
 
                     {/* Company Info */}
@@ -32,7 +32,7 @@ const Footer = () => {
                             </li>
                             <li className="flex items-center justify-center md:justify-start">
                                 <Phone size={16} className="mr-2"/>
-                                +66 82 381 9864 &nbsp;and&nbsp; +66 94 358 6014
+                                +66&nbsp;82&nbsp;381&nbsp;9864&nbsp;and&nbsp;+66&nbsp;94&nbsp;358&nbsp;6014
                             </li>
                             <li className="flex items-center justify-center md:justify-start">
                                 <div className="flex items-center justify-center md:justify-start">
@@ -78,12 +78,12 @@ const FooterDashboard = () => {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="bg-gray-800 text-gray-300 w-full pt-8 pb-6">
+        <footer className="bg-gray-800 text-gray-300 w-full pt-8 pb-6 flex bottom-0">
             <div className="max-w-6xl mx-auto px-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-center md:text-left">
                     {/* Company Logo */}
-                    <div className="flex justify-center md:justify-start">
-                        <Image src="/images/Logo_3.png" alt="Logo" width={140} height={180}/>
+                    <div className="justify-center md:justify-start">
+                        <Image src="/images/Logo_3.png" alt="Logo" width={140} height={140}/>
                     </div>
 
                     {/* Company Info */}
@@ -103,7 +103,7 @@ const FooterDashboard = () => {
                             </li>
                             <li className="flex items-center justify-center md:justify-start">
                                 <Phone size={16} className="mr-2"/>
-                                +66 82 381 9864 &nbsp;and&nbsp; +66 94 358 6014
+                                +66&nbsp;82&nbsp;381&nbsp;9864&nbsp;and&nbsp;+66&nbsp;94&nbsp;358&nbsp;6014
                             </li>
                             <li className="flex items-center justify-center md:justify-start">
                                 <div className="flex items-center justify-center md:justify-start">

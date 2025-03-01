@@ -4,6 +4,7 @@ import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Cloud, Droplets, Sun, Wind, CloudRain, Thermometer } from "lucide-react";
+import {FooterDashboard} from "@/components/footer";
 
 interface WeatherData {
     temperature: number;
@@ -79,8 +80,8 @@ const WeatherPage = () => {
             <Header onMenuClick={() => setIsSidebarOpen(true)} />
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-            <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 p-6 overflow-auto">
-                <Card className="max-w-7xl mx-auto shadow-lg bg-white rounded-lg border border-green-200">
+            <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 overflow-auto">
+                <Card className="max-w-7xl mx-auto shadow-lg bg-white rounded-lg border border-green-200 mt-6">
                     <CardHeader className="bg-green-600 text-white py-4 rounded-t-lg">
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                             <div>
@@ -161,6 +162,9 @@ const WeatherPage = () => {
                         </div>
                     </CardContent>
                 </Card>
+                <div className="md:h-[12.1rem] lg:h-[14.3rem]"></div>
+
+                <FooterDashboard />
             </main>
         </div>
     );

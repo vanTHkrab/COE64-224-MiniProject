@@ -46,19 +46,6 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                     {/* ใช้ AlertButton เพื่อแสดงการแจ้งเตือน */}
                     <AlertButton />
 
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-emerald-50"
-                        onClick={() => setIsDark(!isDark)}
-                    >
-                        {isDark ? (
-                            <Moon className="h-5 w-5 text-slate-600" />
-                        ) : (
-                            <Sun className="h-5 w-5 text-slate-600" />
-                        )}
-                    </Button>
-
                     <div className="flex items-center gap-3 ml-2">
                         <div className="hidden sm:block">
                             <p className="text-sm font-medium text-slate-700">{userName}</p>

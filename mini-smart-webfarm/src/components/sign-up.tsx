@@ -40,7 +40,7 @@ const SignUp = () => {
 
             if (!response.ok) {
                 if (response.status === 400) {
-                    return toast.error("User already exists");
+                    return alert("User already exists");
                 }
             }
 

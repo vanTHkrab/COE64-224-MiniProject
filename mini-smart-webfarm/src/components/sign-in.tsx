@@ -40,8 +40,9 @@ export default function SignIn() {
                 password: data.password as string,
                 redirect: false,
             });
+
         } catch (error) {
-            console.error(error);
+            return alert("Invalid email or password");
         }
     }
 

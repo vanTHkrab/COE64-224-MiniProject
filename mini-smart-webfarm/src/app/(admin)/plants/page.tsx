@@ -361,7 +361,7 @@ const ViewPlantsPage = () => {
             <main className="fixed top-16 left-0 lg:left-72 right-0 bottom-0 overflow-auto">
                 <Card className="shadow-lg bg-white rounded-lg border m-6 border-green-200">
                     <CardHeader className="bg-green-600 text-white py-4 rounded-t-lg flex flex-row items-center justify-between">
-                        <CardTitle className="flex items-center gap-2">
+                        <CardTitle className="flex items-center gap-2 text-2xl">
                             <Leaf className="w-5 h-5" />
                             Plant Information
                         </CardTitle>

@@ -41,7 +41,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             icon: <CloudSunRain className="w-5 h-5" />,
             path: '/weather'
         },
-        { title: 'Settings', icon: <Settings className="w-5 h-5" />, path: '/settings' },
     ];
 
     const SidebarContent = () => (

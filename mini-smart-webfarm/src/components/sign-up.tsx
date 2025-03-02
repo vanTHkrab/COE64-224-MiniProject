@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Lock, Mail, User, Eye, EyeOff } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import {router} from "next/client";
+import { Toaster, toast } from "sonner";
 
 const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -39,12 +39,14 @@ const SignUp = () => {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to sign up");
+                if (response.status === 400) {
+                    return toast.error("User already exists");
+                }
             }
 
             const responseData = await response.json();
             console.log(responseData);
-            await router.push("/");
+            window.location.reload();
         } catch (error) {
             console.error(error);
         }

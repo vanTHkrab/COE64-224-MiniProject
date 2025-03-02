@@ -10,6 +10,7 @@ import "leaflet-defaulticon-compatibility";
 
 interface CropData {
     id: number;
+    plant: string;
     plantation_area: string;
     latitude: number;
     longitude: number;
@@ -74,6 +75,10 @@ const MapDisplay = () => {
                 >
                     <Popup>
                         <strong>{crop.plantation_area}</strong>
+                        <br/>
+                        ID: {crop.id}
+                        <br />
+                        Plant: {crop.plant}
                         <br />
                         Latitude: {crop.latitude.toFixed(6)}
                         <br />

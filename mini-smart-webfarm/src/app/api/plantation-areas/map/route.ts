@@ -6,10 +6,21 @@ export async function GET() {
         const areas = await prisma.crop_infos.findMany({
             select: {
                 id: true,
+                plant: true,
                 plantation_area: true,
                 latitude: true,
-                longitude: true}
-        });
+                longitude: true,
+            },
+            where: {
+                latitude: {
+                    not: null
+                },
+                longitude: {
+                    not: null
+                },
+            }
+            },
+        );
         return NextResponse.json(areas);
     } catch (error) {
         console.error("Database error fetching plantation areas:", error);
